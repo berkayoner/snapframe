@@ -1,0 +1,749 @@
+{
+  "extName": {
+    "message": "SnapFrame"
+  },
+  "extDescription": {
+    "message": "Capture, annotate and beautify screenshots — entirely on your device."
+  },
+  "captureVisible": {
+    "message": "Capture visible area"
+  },
+  "captureVisibleDescription": {
+    "message": "What's on screen right now"
+  },
+  "captureArea": {
+    "message": "Select area"
+  },
+  "captureAreaDescription": {
+    "message": "Drag to capture part of the page"
+  },
+  "captureElement": {
+    "message": "Capture element"
+  },
+  "captureElementDescription": {
+    "message": "Click a card, button or section"
+  },
+  "overlayElementHint": {
+    "message": "Click an element to capture it"
+  },
+  "overlayElementNavigate": {
+    "message": "parent / child"
+  },
+  "captureFullPage": {
+    "message": "Capture full page"
+  },
+  "captureFullPageDescription": {
+    "message": "Scrolls and stitches the whole page"
+  },
+  "captureProgress": {
+    "message": "Capturing… $ARG1$ / $ARG2$",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      },
+      "arg2": {
+        "content": "$2"
+      }
+    }
+  },
+  "openLibrary": {
+    "message": "Open library"
+  },
+  "customizeShortcuts": {
+    "message": "Customize shortcuts"
+  },
+  "recent": {
+    "message": "Recent"
+  },
+  "recentEmpty": {
+    "message": "Your captures will appear here."
+  },
+  "viewAll": {
+    "message": "View all"
+  },
+  "untitledCapture": {
+    "message": "Untitled capture"
+  },
+  "themeToggle": {
+    "message": "Theme: $ARG1$",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "themeSystem": {
+    "message": "System"
+  },
+  "themeLight": {
+    "message": "Light"
+  },
+  "themeDark": {
+    "message": "Dark"
+  },
+  "close": {
+    "message": "Close"
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "done": {
+    "message": "Done"
+  },
+  "loading": {
+    "message": "Loading…"
+  },
+  "errorUnsupportedPage": {
+    "message": "This page can't be captured. Browser pages and extension stores are off-limits — try a regular website."
+  },
+  "errorNoActiveTab": {
+    "message": "No active tab found to capture."
+  },
+  "errorCaptureFailed": {
+    "message": "Capture failed. Please try again."
+  },
+  "errorAreaTooSmall": {
+    "message": "The selected area is too small to capture."
+  },
+  "errorCaptureBusy": {
+    "message": "Another capture is still in progress."
+  },
+  "overlayHint": {
+    "message": "Drag to select an area"
+  },
+  "overlayCancel": {
+    "message": "to cancel"
+  },
+  "editorTitle": {
+    "message": "SnapFrame Editor"
+  },
+  "loadingCapture": {
+    "message": "Loading capture…"
+  },
+  "captureNotFound": {
+    "message": "Capture not found"
+  },
+  "captureNotFoundHint": {
+    "message": "It may have been deleted. Open SnapFrame from the toolbar to take a new one."
+  },
+  "captureLoadError": {
+    "message": "Couldn't load this capture."
+  },
+  "warningTruncated": {
+    "message": "This page was very tall, so the capture was cut off at the browser's maximum image height."
+  },
+  "sourceVisible": {
+    "message": "Visible area"
+  },
+  "sourceArea": {
+    "message": "Area"
+  },
+  "sourceFullPage": {
+    "message": "Full page"
+  },
+  "sourceUpload": {
+    "message": "Imported"
+  },
+  "toolbarLabel": {
+    "message": "Annotation tools"
+  },
+  "toolSelect": {
+    "message": "Select"
+  },
+  "toolCrop": {
+    "message": "Crop"
+  },
+  "toolRectangle": {
+    "message": "Rectangle"
+  },
+  "toolEllipse": {
+    "message": "Ellipse"
+  },
+  "toolArrow": {
+    "message": "Arrow"
+  },
+  "toolText": {
+    "message": "Text"
+  },
+  "toolStep": {
+    "message": "Step number"
+  },
+  "toolHighlight": {
+    "message": "Highlight"
+  },
+  "toolBlur": {
+    "message": "Blur"
+  },
+  "objImage": {
+    "message": "Screenshot"
+  },
+  "undo": {
+    "message": "Undo"
+  },
+  "redo": {
+    "message": "Redo"
+  },
+  "preview": {
+    "message": "Preview"
+  },
+  "previewTitle": {
+    "message": "Export preview"
+  },
+  "copy": {
+    "message": "Copy"
+  },
+  "copyImage": {
+    "message": "Copy image"
+  },
+  "download": {
+    "message": "Download"
+  },
+  "exportSettings": {
+    "message": "Export settings"
+  },
+  "exportFormat": {
+    "message": "Format"
+  },
+  "exportQuality": {
+    "message": "Quality"
+  },
+  "exportScale": {
+    "message": "Scale"
+  },
+  "exportSize": {
+    "message": "$ARG1$ × $ARG2$ px",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      },
+      "arg2": {
+        "content": "$2"
+      }
+    }
+  },
+  "exportTooLarge": {
+    "message": "Too large to export ($ARG1$). Try 1× or crop the image.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "exportFailed": {
+    "message": "Export failed. Please try again."
+  },
+  "copyFailed": {
+    "message": "Couldn't copy the image. Your browser may not allow clipboard images."
+  },
+  "toastDownloaded": {
+    "message": "Image downloaded"
+  },
+  "toastCopied": {
+    "message": "Copied to clipboard"
+  },
+  "shortcutsTitle": {
+    "message": "Keyboard shortcuts"
+  },
+  "shortcutsTools": {
+    "message": "Tools"
+  },
+  "shortcutsGeneral": {
+    "message": "General"
+  },
+  "selectAll": {
+    "message": "Select all"
+  },
+  "duplicate": {
+    "message": "Duplicate"
+  },
+  "copyPasteObjects": {
+    "message": "Copy / paste annotations"
+  },
+  "delete": {
+    "message": "Delete"
+  },
+  "nudge": {
+    "message": "Nudge (Shift = 10 px)"
+  },
+  "arrangeShortcut": {
+    "message": "Send to back / bring to front"
+  },
+  "constrainShortcut": {
+    "message": "Hold while drawing: square, circle, 45° arrow"
+  },
+  "zoomInOut": {
+    "message": "Zoom in / out"
+  },
+  "zoomFit": {
+    "message": "Fit to screen"
+  },
+  "zoomActualSize": {
+    "message": "Actual size (100%)"
+  },
+  "escapeShortcut": {
+    "message": "Deselect / back to Select tool"
+  },
+  "zoom": {
+    "message": "Zoom"
+  },
+  "zoomIn": {
+    "message": "Zoom in"
+  },
+  "zoomOut": {
+    "message": "Zoom out"
+  },
+  "cropFree": {
+    "message": "Free"
+  },
+  "cropApply": {
+    "message": "Apply"
+  },
+  "cropHint": {
+    "message": "Drag over the area to keep"
+  },
+  "inspectorLabel": {
+    "message": "Properties"
+  },
+  "selectionCount": {
+    "message": "$ARG1$ selected",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "styleTitle": {
+    "message": "Style"
+  },
+  "styleHint": {
+    "message": "Used for new annotations. Select an annotation to change it."
+  },
+  "color": {
+    "message": "Color"
+  },
+  "colorNone": {
+    "message": "None"
+  },
+  "colorCustom": {
+    "message": "Custom color"
+  },
+  "strokeWidth": {
+    "message": "Stroke"
+  },
+  "fill": {
+    "message": "Fill"
+  },
+  "fillNone": {
+    "message": "None"
+  },
+  "fillTint": {
+    "message": "Tint"
+  },
+  "fillSolid": {
+    "message": "Solid"
+  },
+  "corners": {
+    "message": "Corners"
+  },
+  "cornersSharp": {
+    "message": "Sharp"
+  },
+  "cornersRounded": {
+    "message": "Rounded"
+  },
+  "labelColor": {
+    "message": "Label"
+  },
+  "textColor": {
+    "message": "Text color"
+  },
+  "fontSize": {
+    "message": "Size"
+  },
+  "fontFamily": {
+    "message": "Font"
+  },
+  "fontSans": {
+    "message": "Sans-serif"
+  },
+  "fontSerif": {
+    "message": "Serif"
+  },
+  "fontMono": {
+    "message": "Monospace"
+  },
+  "bold": {
+    "message": "Bold"
+  },
+  "textAlign": {
+    "message": "Alignment"
+  },
+  "alignLeft": {
+    "message": "Align left"
+  },
+  "alignCenter": {
+    "message": "Center"
+  },
+  "alignRight": {
+    "message": "Align right"
+  },
+  "textPlaceholder": {
+    "message": "Type something…"
+  },
+  "stepNumber": {
+    "message": "Number"
+  },
+  "redactMode": {
+    "message": "Mode"
+  },
+  "redactPixelate": {
+    "message": "Pixelate"
+  },
+  "redactBlur": {
+    "message": "Blur"
+  },
+  "redactStrength": {
+    "message": "Strength"
+  },
+  "bringToFront": {
+    "message": "Bring to front"
+  },
+  "sendToBack": {
+    "message": "Send to back"
+  },
+  "frameTitle": {
+    "message": "Background"
+  },
+  "frameNone": {
+    "message": "No background"
+  },
+  "frameHint": {
+    "message": "Pick a background to add padding, rounded corners and a shadow."
+  },
+  "frameBackground": {
+    "message": "Background"
+  },
+  "framePadding": {
+    "message": "Padding"
+  },
+  "frameRadius": {
+    "message": "Corner radius"
+  },
+  "frameShadow": {
+    "message": "Shadow"
+  },
+  "shadowNone": {
+    "message": "None"
+  },
+  "shadowSoft": {
+    "message": "Soft"
+  },
+  "shadowMedium": {
+    "message": "Medium"
+  },
+  "shadowStrong": {
+    "message": "Strong"
+  },
+  "bgLavender": {
+    "message": "Lavender"
+  },
+  "bgSunset": {
+    "message": "Sunset"
+  },
+  "bgPeach": {
+    "message": "Peach"
+  },
+  "bgOcean": {
+    "message": "Ocean"
+  },
+  "bgMint": {
+    "message": "Mint"
+  },
+  "bgViolet": {
+    "message": "Violet"
+  },
+  "bgMidnight": {
+    "message": "Midnight"
+  },
+  "bgAurora": {
+    "message": "Aurora"
+  },
+  "bgWhite": {
+    "message": "White"
+  },
+  "bgGray": {
+    "message": "Gray"
+  },
+  "bgBlack": {
+    "message": "Black"
+  },
+  "bgTransparent": {
+    "message": "Transparent"
+  },
+  "mockupTitle": {
+    "message": "Device mockup"
+  },
+  "mockupNone": {
+    "message": "None"
+  },
+  "mockupBrowser": {
+    "message": "Browser"
+  },
+  "mockupLaptop": {
+    "message": "Laptop"
+  },
+  "mockupPhone": {
+    "message": "Phone"
+  },
+  "mockupTablet": {
+    "message": "Tablet"
+  },
+  "libraryTitle": {
+    "message": "Library"
+  },
+  "libraryCount": {
+    "message": "$ARG1$ of $ARG2$ captures",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      },
+      "arg2": {
+        "content": "$2"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "Search by title or URL"
+  },
+  "importImage": {
+    "message": "Import image"
+  },
+  "importHint": {
+    "message": "Tip: paste (Ctrl+V) or drop an image anywhere on this page to import it."
+  },
+  "dropToImport": {
+    "message": "Drop the image to open it in the editor"
+  },
+  "pastedImage": {
+    "message": "Pasted image"
+  },
+  "importUnsupported": {
+    "message": "That file type isn't supported. Use PNG, JPG, WebP, GIF or BMP."
+  },
+  "importTooLarge": {
+    "message": "That image is too large to edit in the browser."
+  },
+  "importFailed": {
+    "message": "Couldn't read that image."
+  },
+  "libraryEmptyTitle": {
+    "message": "No captures yet"
+  },
+  "libraryEmptyBody": {
+    "message": "Click the SnapFrame icon or press Alt+Shift+S on any website to take your first screenshot."
+  },
+  "noResults": {
+    "message": "No captures match your search."
+  },
+  "openInEditor": {
+    "message": "Open “$ARG1$” in the editor",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadOriginal": {
+    "message": "Download original"
+  },
+  "clearAll": {
+    "message": "Clear all"
+  },
+  "clearAllTitle": {
+    "message": "Delete all captures?"
+  },
+  "clearAllBody": {
+    "message": "Every capture and its edits will be permanently removed from this device."
+  },
+  "deleteTitle": {
+    "message": "Delete this capture?"
+  },
+  "deleteBody": {
+    "message": "The screenshot and its edits will be permanently removed from this device."
+  },
+  "deleteFailed": {
+    "message": "Couldn't delete. Please try again."
+  },
+  "toastDeleted": {
+    "message": "Capture deleted"
+  },
+  "toastCleared": {
+    "message": "Library cleared"
+  },
+  "welcomeDocTitle": {
+    "message": "Welcome"
+  },
+  "welcomeEyebrow": {
+    "message": "Welcome to SnapFrame"
+  },
+  "welcomeTitle": {
+    "message": "Screenshots that look finished."
+  },
+  "welcomeSubtitle": {
+    "message": "Capture any page, mark it up and export a polished image — in seconds, without leaving your browser."
+  },
+  "welcomeStepsLabel": {
+    "message": "Getting started"
+  },
+  "welcomeStep1Title": {
+    "message": "Pin SnapFrame"
+  },
+  "welcomeStep1Body": {
+    "message": "Click the puzzle-piece icon in your toolbar and pin SnapFrame for one-click captures."
+  },
+  "welcomeStep2Title": {
+    "message": "Capture"
+  },
+  "welcomeStep2Body": {
+    "message": "Use the toolbar button, the right-click menu or these shortcuts on any website:"
+  },
+  "welcomeStep3Title": {
+    "message": "Polish & share"
+  },
+  "welcomeStep3Body": {
+    "message": "Annotate, redact, add a background or a device frame — then copy or download."
+  },
+  "welcomePrivacyTitle": {
+    "message": "Private by design"
+  },
+  "welcomePrivacyBody": {
+    "message": "No account, no uploads, no tracking. Your captures never leave this browser."
+  },
+  "shortcutNotSet": {
+    "message": "Not set"
+  },
+  "sensitiveEmail": {
+    "message": "email"
+  },
+  "sensitivePhone": {
+    "message": "phone"
+  },
+  "sensitiveCard": {
+    "message": "card number"
+  },
+  "sensitiveIban": {
+    "message": "IBAN"
+  },
+  "sensitiveNationalId": {
+    "message": "ID number"
+  },
+  "sensitiveSecret": {
+    "message": "API key"
+  },
+  "redactFound": {
+    "message": "Sensitive data found ($ARG1$)",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "redactAll": {
+    "message": "Redact all"
+  },
+  "redactShow": {
+    "message": "Show where"
+  },
+  "redactHide": {
+    "message": "Hide outlines"
+  },
+  "redactDone": {
+    "message": "Sensitive data redacted ($ARG1$)",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "privacyTitle": {
+    "message": "Privacy"
+  },
+  "privacyAllCovered": {
+    "message": "All detected sensitive data is redacted."
+  },
+  "magneticTitle": {
+    "message": "Magnetic drawing"
+  },
+  "magneticHint": {
+    "message": "Shapes snap to page elements; click to frame one. Hold Alt to draw freely."
+  },
+  "copied": {
+    "message": "Copied"
+  },
+  "downloaded": {
+    "message": "Downloaded"
+  },
+  "animate": {
+    "message": "Animate"
+  },
+  "animateTooltip": {
+    "message": "Export a short clip where annotations appear one by one"
+  },
+  "animateTitle": {
+    "message": "Animated export"
+  },
+  "animateSpeed": {
+    "message": "Speed"
+  },
+  "speedSlow": {
+    "message": "Slow"
+  },
+  "speedNormal": {
+    "message": "Normal"
+  },
+  "speedFast": {
+    "message": "Fast"
+  },
+  "animateCamera": {
+    "message": "Camera follows annotations"
+  },
+  "animateCameraHint": {
+    "message": "Zooms in on each annotation as it appears."
+  },
+  "animateExport": {
+    "message": "Export $ARG1$",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "animateDuration": {
+    "message": "$ARG1$ s",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "animateDone": {
+    "message": "Animation saved"
+  },
+  "animateFailed": {
+    "message": "Couldn't create the animation."
+  },
+  "animateEmpty": {
+    "message": "Add arrows, boxes, labels or steps — they'll appear one by one."
+  },
+  "animateMp4Unsupported": {
+    "message": "This browser can't encode MP4 — use WebM or GIF."
+  },
+  "privacyNote": {
+    "message": "Everything stays on this device — nothing is uploaded. The $ARG1$ most recent captures are kept.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  }
+}

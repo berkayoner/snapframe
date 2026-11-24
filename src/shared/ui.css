@@ -1,0 +1,545 @@
+/* Base styles + shared UI primitives for every extension page. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: var(--sf-font);
+  font-size: var(--sf-text-base);
+  font-optical-sizing: auto;
+  /* Inter: contextual alternates + disambiguated l/I/1 for UI text. */
+  font-feature-settings: 'calt', 'cv05';
+  line-height: 1.45;
+  color: var(--sf-fg);
+  background: var(--sf-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--sf-accent-soft);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--sf-focus);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--sf-radius);
+  border: 1px solid var(--sf-border);
+  background: var(--sf-surface);
+  color: var(--sf-fg);
+  font-weight: 550;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--sf-shadow-sm);
+  transition:
+    background-color var(--sf-duration-fast) var(--sf-ease),
+    border-color var(--sf-duration-fast) var(--sf-ease),
+    color var(--sf-duration-fast) var(--sf-ease),
+    box-shadow var(--sf-duration-fast) var(--sf-ease),
+    transform var(--sf-duration-fast) var(--sf-ease);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--sf-surface-hover);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0.5px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Primary: brand violet with a soft top sheen and a tinted glow. */
+.btn--primary {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0)) var(--sf-accent);
+  border-color: var(--sf-accent);
+  color: var(--sf-accent-fg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 1px 2px rgba(40, 20, 120, 0.25);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0)) var(--sf-accent-hover);
+  border-color: var(--sf-accent-hover);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    var(--sf-shadow-accent);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.btn--danger {
+  color: var(--sf-danger);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: var(--sf-danger-soft);
+  border-color: transparent;
+}
+
+.btn--sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--sf-radius);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--sf-fg-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--sf-duration-fast) var(--sf-ease),
+    color var(--sf-duration-fast) var(--sf-ease);
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--sf-surface-hover);
+  color: var(--sf-fg);
+}
+
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.icon-btn[aria-pressed='true'] {
+  background: var(--sf-accent-soft);
+  color: var(--sf-accent-text);
+}
+
+.icon-btn--sm {
+  width: 28px;
+  height: 28px;
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 4px;
+  border: 1px solid var(--sf-border);
+  border-bottom-width: 2px;
+  background: var(--sf-surface-2);
+  color: var(--sf-fg-muted);
+  font-family: var(--sf-mono);
+  font-size: 10.5px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ---------- Form controls ---------- */
+
+.input,
+.select {
+  height: 30px;
+  padding: 0 8px;
+  border-radius: var(--sf-radius-sm);
+  border: 1px solid var(--sf-border);
+  background: var(--sf-surface);
+  color: var(--sf-fg);
+  min-width: 0;
+}
+
+.input:focus-visible,
+.select:focus-visible {
+  border-color: var(--sf-accent);
+}
+
+.range {
+  width: 100%;
+  accent-color: var(--sf-accent);
+  margin: 0;
+}
+
+.segmented {
+  display: flex;
+  padding: 2px;
+  gap: 2px;
+  border-radius: var(--sf-radius);
+  background: var(--sf-surface-2);
+  border: 1px solid var(--sf-border);
+}
+
+.segmented__item {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  height: 26px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--sf-fg-muted);
+  font-size: 12px;
+  font-weight: 550;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.segmented__item:hover {
+  color: var(--sf-fg);
+}
+
+.segmented__item[aria-pressed='true'] {
+  background: var(--sf-surface);
+  color: var(--sf-fg);
+  box-shadow: var(--sf-shadow-sm);
+}
+
+/* ---------- Tooltips (CSS-only, from data-tooltip) ---------- */
+
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  z-index: 50;
+  left: 50%;
+  top: calc(100% + 6px);
+  transform: translateX(-50%) translateY(-2px);
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: #1c1c22;
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: pre;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 0.12s,
+    transform 0.12s;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  transition-delay: 0.35s;
+}
+
+[data-tooltip-side='right']::after {
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-2px);
+}
+
+[data-tooltip-side='right']:hover::after,
+[data-tooltip-side='right']:focus-visible::after {
+  transform: translateY(-50%) translateX(0);
+}
+
+[data-tooltip-side='left']::after {
+  left: auto;
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%) translateX(2px);
+}
+
+[data-tooltip-side='left']:hover::after,
+[data-tooltip-side='left']:focus-visible::after {
+  transform: translateY(-50%) translateX(0);
+}
+
+[data-tooltip-side='top']::after {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+/* ---------- Dialog ---------- */
+
+.dialog {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sf-fg);
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+}
+
+.dialog::backdrop {
+  background: rgba(8, 8, 12, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.dialog__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 32px);
+  width: min(520px, calc(100vw - 32px));
+  border-radius: var(--sf-radius-lg);
+  border: 1px solid var(--sf-border);
+  background: var(--sf-surface);
+  box-shadow: var(--sf-shadow-lg);
+  overflow: hidden;
+}
+
+.dialog--lg .dialog__panel {
+  width: min(1100px, calc(100vw - 32px));
+}
+
+.dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 12px 12px 18px;
+  border-bottom: 1px solid var(--sf-border);
+}
+
+.dialog__title {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.dialog__body {
+  padding: 18px;
+  overflow: auto;
+}
+
+.dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--sf-border);
+  background: var(--sf-surface-2);
+}
+
+/* ---------- Toasts ---------- */
+
+.toaster {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 100;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(480px, calc(100vw - 32px));
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: #1c1c22;
+  color: #fff;
+  font-weight: 500;
+  box-shadow: var(--sf-shadow-lg);
+  pointer-events: auto;
+  cursor: default;
+  animation: sf-toast-in 0.18s ease-out;
+}
+
+.toast--success svg {
+  color: #3dd68c;
+}
+
+.toast--error svg {
+  color: #ff6369;
+}
+
+.toast--info svg {
+  color: #b4a6ff;
+}
+
+@keyframes sf-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---------- Misc ---------- */
+
+.spinner {
+  animation: sf-spin 0.8s linear infinite;
+}
+
+@keyframes sf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.state-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  color: var(--sf-fg-muted);
+}
+
+.state-screen__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--sf-surface);
+  border: 1px solid var(--sf-border);
+  color: var(--sf-fg-muted);
+  margin-bottom: 4px;
+}
+
+.state-screen__title {
+  color: var(--sf-fg);
+  font-size: 15px;
+  font-weight: 650;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Brand ---------- */
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.logo > svg {
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(80, 52, 230, 0.25));
+}
+
+.wordmark {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.wordmark__snap {
+  color: var(--sf-wordmark-snap);
+}
+
+.wordmark__frame {
+  color: var(--sf-wordmark-frame);
+}
+
+/* Brand eyebrow label (small caps over headings) */
+.eyebrow {
+  font-size: var(--sf-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sf-accent-text);
+}
+
+/* Small celebratory pop for confirmation icons. */
+.pop-in {
+  animation: sf-pop 0.36s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes sf-pop {
+  from {
+    transform: scale(0.4) rotate(-12deg);
+    opacity: 0;
+  }
+}
+
+.segmented__item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

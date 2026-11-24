@@ -1,0 +1,82 @@
+{
+  "name": "snapframe",
+  "description": "Capture, annotate and beautify screenshots — entirely on your device.",
+  "private": true,
+  "version": "1.3.0",
+  "license": "MIT",
+  "author": "Berkay Öner",
+  "homepage": "https://github.com/berkayoner/snapframe#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/berkayoner/snapframe.git"
+  },
+  "bugs": {
+    "url": "https://github.com/berkayoner/snapframe/issues"
+  },
+  "keywords": [
+    "chrome-extension",
+    "edge-extension",
+    "manifest-v3",
+    "screenshot",
+    "annotation",
+    "mockup",
+    "redaction",
+    "privacy"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "build:e2e": "wxt build --mode e2e",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "compile": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "node tests/e2e/run.mjs",
+    "brand": "node scripts/generate-brand.mjs",
+    "store": "node scripts/generate-store-assets.mjs",
+    "check": "npm run compile && npm run lint && npm run format:check && npm run test",
+    "postinstall": "wxt prepare"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "dexie": "^4.4.5",
+    "gifenc": "^1.0.3",
+    "konva": "^10.3.2",
+    "lucide-react": "^1.77.0",
+    "mp4-muxer": "^5.2.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-konva": "^19.2.5",
+    "webm-muxer": "^5.1.4",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@fontsource/inter": "^5.3.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@wxt-dev/module-react": "^1.1.5",
+    "eslint": "^10.15.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.14.0",
+    "opentype.js": "^2.0.0",
+    "playwright": "^1.65.1",
+    "prettier": "^3.10.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.73.0",
+    "vitest": "^5.1.1",
+    "web-ext": "^10.5.0",
+    "wxt": "^0.21.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

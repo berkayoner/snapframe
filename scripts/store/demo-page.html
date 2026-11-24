@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lumen — Overview</title>
+    <!-- Fictional product used only as capture material for the store screenshots. -->
+    <style>
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; }
+      body {
+        font: 14px/1.45 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+        color: #1b2130;
+        background: #f4f6fb;
+        display: grid;
+        grid-template-columns: 232px 1fr;
+      }
+      aside {
+        background: #0f172a;
+        color: #cbd5e1;
+        padding: 22px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .brand { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; font-size: 17px; margin: 0 8px 22px; }
+      .brand i { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #22d3ee, #0ea5e9); }
+      nav a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: inherit; text-decoration: none; }
+      nav a b { width: 16px; height: 16px; border-radius: 4px; background: #334155; }
+      nav a.active { background: #1e293b; color: #fff; }
+      nav a.active b { background: #38bdf8; }
+      .nav-label { margin: 18px 12px 6px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #64748b; }
+      main { padding: 22px 28px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+      header { display: flex; align-items: center; gap: 14px; }
+      header h1 { margin: 0; font-size: 22px; flex: 1; }
+      .search { width: 260px; height: 36px; border-radius: 9px; background: #fff; border: 1px solid #e2e8f0; padding: 0 12px; color: #94a3b8; display: flex; align-items: center; }
+      .btn { height: 36px; padding: 0 16px; border-radius: 9px; border: 0; background: #0ea5e9; color: #fff; font-weight: 600; display: inline-flex; align-items: center; }
+      .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #fbbf24, #f97316); }
+      .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .card { background: #fff; border-radius: 14px; border: 1px solid #e8ecf3; padding: 16px 18px; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
+      .kpi small { color: #64748b; font-weight: 600; }
+      .kpi strong { display: block; font-size: 26px; margin-top: 4px; letter-spacing: -.02em; }
+      .up { color: #16a34a; font-weight: 600; font-size: 12px; }
+      .down { color: #dc2626; font-weight: 600; font-size: 12px; }
+      .grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; }
+      .card h2 { margin: 0 0 12px; font-size: 15px; display: flex; justify-content: space-between; }
+      .card h2 span { color: #94a3b8; font-weight: 500; font-size: 12px; }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      td { padding: 8px 0; border-top: 1px solid #f1f5f9; }
+      td:last-child { text-align: right; font-weight: 600; }
+      .who { display: flex; align-items: center; gap: 9px; }
+      .who i { width: 26px; height: 26px; border-radius: 50%; background: #e0f2fe; }
+      .email { color: #64748b; font-size: 12px; display: block; }
+      .bars { display: flex; flex-direction: column; gap: 10px; }
+      .bar { display: grid; grid-template-columns: 90px 1fr 44px; align-items: center; gap: 10px; font-size: 13px; }
+      .bar span { height: 8px; border-radius: 99px; background: #e2e8f0; position: relative; overflow: hidden; }
+      .bar span::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--w); background: #38bdf8; border-radius: inherit; }
+    </style>
+  </head>
+  <body>
+    <aside>
+      <div class="brand"><i></i>Lumen</div>
+      <nav>
+        <a class="active" href="#"><b></b>Overview</a>
+        <a href="#"><b></b>Revenue</a>
+        <a href="#"><b></b>Customers</a>
+        <a href="#"><b></b>Funnels</a>
+        <a href="#"><b></b>Experiments</a>
+        <div class="nav-label">Workspace</div>
+        <a href="#"><b></b>Reports</a>
+        <a href="#"><b></b>Integrations</a>
+        <a href="#"><b></b>Settings</a>
+      </nav>
+    </aside>
+    <main>
+      <header>
+        <h1>Overview</h1>
+        <div class="search">Search metrics…</div>
+        <button class="btn" id="cta">New report</button>
+        <div class="avatar"></div>
+      </header>
+      <section class="kpis">
+        <div class="card kpi" id="kpi-revenue"><small>Revenue</small><strong>$48,290</strong><span class="up">▲ 12.4% vs last month</span></div>
+        <div class="card kpi"><small>Active users</small><strong>8,214</strong><span class="up">▲ 6.1%</span></div>
+        <div class="card kpi"><small>Conversion</small><strong>3.6%</strong><span class="down">▼ 0.4%</span></div>
+        <div class="card kpi"><small>Churn</small><strong>1.9%</strong><span class="up">▼ 0.3%</span></div>
+      </section>
+      <section class="grid">
+        <div class="card" id="chart">
+          <h2>Revenue <span>Last 12 weeks</span></h2>
+          <svg viewBox="0 0 600 220" width="100%" height="220" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#38bdf8" stop-opacity=".35" />
+                <stop offset="1" stop-color="#38bdf8" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <g stroke="#eef2f7"><line x1="0" y1="55" x2="600" y2="55" /><line x1="0" y1="110" x2="600" y2="110" /><line x1="0" y1="165" x2="600" y2="165" /></g>
+            <path d="M0 170 L55 158 L110 162 L165 140 L220 146 L275 120 L330 126 L385 98 L440 104 L495 74 L550 66 L600 40 L600 220 L0 220Z" fill="url(#area)" />
+            <path d="M0 170 L55 158 L110 162 L165 140 L220 146 L275 120 L330 126 L385 98 L440 104 L495 74 L550 66 L600 40" fill="none" stroke="#0ea5e9" stroke-width="3" />
+            <circle cx="600" cy="40" r="5" fill="#0ea5e9" />
+          </svg>
+        </div>
+        <div class="card" id="signups">
+          <h2>New customers <span>Today</span></h2>
+          <table>
+            <tr><td><div class="who"><i></i><div>Ada Moreau<span class="email">ada.moreau@example.com</span></div></div></td><td>$1,240</td></tr>
+            <tr><td><div class="who"><i></i><div>Kenji Sato<span class="email">kenji.sato@example.com</span></div></div></td><td>$860</td></tr>
+            <tr><td><div class="who"><i></i><div>Leyla Demir<span class="email">leyla.demir@example.com</span></div></div></td><td>$2,410</td></tr>
+            <tr><td><div class="who"><i></i><div>Noah Becker<span class="email">noah.becker@example.com</span></div></div></td><td>$540</td></tr>
+          </table>
+        </div>
+      </section>
+      <section class="grid">
+        <div class="card">
+          <h2>Top channels <span>Share of revenue</span></h2>
+          <div class="bars">
+            <div class="bar">Organic<span style="--w: 72%"></span>42%</div>
+            <div class="bar">Referral<span style="--w: 48%"></span>27%</div>
+            <div class="bar">Paid<span style="--w: 30%"></span>18%</div>
+          </div>
+        </div>
+        <div class="card"><h2>Goal <span>Q4</span></h2><strong style="font-size:22px">$210k</strong><div class="bar" style="grid-template-columns:1fr 44px;margin-top:12px"><span style="--w: 64%"></span>64%</div></div>
+      </section>
+    </main>
+  </body>
+</html>

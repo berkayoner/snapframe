@@ -1,0 +1,326 @@
+.inspector {
+  width: 272px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--sf-border);
+  background: var(--sf-surface);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.inspector__section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--sf-border);
+}
+
+.inspector__section:last-child {
+  border-bottom: 0;
+}
+
+.inspector__title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sf-fg-muted);
+}
+
+.inspector__hint {
+  font-size: 11.5px;
+  color: var(--sf-fg-subtle);
+  line-height: 1.4;
+}
+
+.inspector__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inspector__label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+  color: var(--sf-fg-muted);
+}
+
+.inspector__value {
+  font-family: var(--sf-mono);
+  font-size: 11px;
+  color: var(--sf-fg-subtle);
+}
+
+.inspector__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.inspector__grow {
+  flex: 1;
+}
+
+.inspector__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 2px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--sf-border);
+}
+
+.inspector__danger:hover:not(:disabled) {
+  background: var(--sf-danger-soft);
+  color: var(--sf-danger);
+}
+
+/* Annotation palette */
+.palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(24px, 1fr));
+  gap: 6px;
+}
+
+.palette__swatch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  color: var(--sf-fg-muted);
+  transition: transform 0.1s;
+}
+
+.palette__swatch:hover {
+  transform: scale(1.08);
+}
+
+.palette__swatch[aria-pressed='true'],
+.palette__swatch[data-active='true'] {
+  box-shadow:
+    0 0 0 2px var(--sf-surface),
+    0 0 0 4px var(--sf-accent);
+}
+
+.palette__swatch--none,
+.palette__swatch--custom {
+  background: var(--sf-surface-2);
+  border-style: dashed;
+  border-color: var(--sf-border-strong);
+}
+
+.palette__swatch--custom[data-active='false'] {
+  background: conic-gradient(from 90deg, #ff3b30, #ffcc00, #34c759, #007aff, #af52de, #ff3b30);
+  color: #fff;
+  border: 0;
+}
+
+.palette__swatch--custom:focus-within {
+  box-shadow: var(--sf-focus);
+}
+
+/* Stroke sample bars inside the segmented control */
+.stroke-sample {
+  display: block;
+  width: 22px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+/* Frame background swatches */
+.bg-swatches {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.bg-swatch {
+  aspect-ratio: 1;
+  width: 100%;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.bg-swatch:hover {
+  transform: scale(1.06);
+}
+
+.bg-swatch[aria-pressed='true'],
+.bg-swatch[data-active='true'] {
+  box-shadow:
+    0 0 0 2px var(--sf-surface),
+    0 0 0 4px var(--sf-accent);
+}
+
+.bg-swatch--transparent {
+  background: repeating-conic-gradient(#d4d4d8 0% 25%, #ffffff 0% 50%) 0 0 / 10px 10px !important;
+}
+
+.bg-swatch--custom {
+  display: block;
+  position: relative;
+}
+
+.bg-swatch--custom[data-active='false'] {
+  background: conic-gradient(from 90deg, #ff3b30, #ffcc00, #34c759, #007aff, #af52de, #ff3b30);
+}
+
+.bg-swatch--custom:focus-within {
+  box-shadow: var(--sf-focus);
+}
+
+/* Mockup tiles */
+.mockup-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.mockup-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 58px;
+  padding: 6px 4px;
+  border-radius: var(--sf-radius);
+  border: 1px solid var(--sf-border);
+  background: var(--sf-surface);
+  color: var(--sf-fg-muted);
+  font-size: 11.5px;
+  font-weight: 550;
+  cursor: pointer;
+  transition:
+    border-color 0.12s,
+    background-color 0.12s,
+    color 0.12s;
+}
+
+.mockup-tile:hover {
+  background: var(--sf-surface-hover);
+  color: var(--sf-fg);
+}
+
+.mockup-tile[aria-pressed='true'] {
+  border-color: var(--sf-accent);
+  background: var(--sf-accent-soft);
+  color: var(--sf-accent-text);
+}
+
+.bg-swatch--none {
+  display: grid;
+  place-items: center;
+  background: var(--sf-surface-2);
+  border: 1px dashed var(--sf-border-strong);
+  color: var(--sf-fg-muted);
+}
+
+/* Toggle rows (switch on the right) */
+.switch-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 4px;
+  cursor: pointer;
+}
+
+.switch-row__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.switch-row__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--sf-text-sm);
+  font-weight: 600;
+}
+
+.switch-row__hint {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--sf-fg-subtle);
+}
+
+.switch {
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 32px;
+  height: 18px;
+  margin: 1px 0 0;
+  border-radius: 999px;
+  background: var(--sf-border-strong);
+  cursor: pointer;
+  transition: background-color var(--sf-duration) var(--sf-ease);
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform var(--sf-duration) var(--sf-ease);
+}
+
+.switch:checked {
+  background: var(--sf-accent);
+}
+
+.switch:checked::after {
+  transform: translateX(14px);
+}
+
+.privacy-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--sf-text-sm);
+  color: var(--sf-fg-muted);
+}
+
+.privacy-summary strong {
+  color: var(--sf-fg);
+}
+
+.privacy-summary svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #e5352b;
+}
+
+.privacy-summary--ok svg {
+  color: var(--sf-success);
+}
+
+/* Sections ease in when the panel content changes (selection, tool). */
+.inspector__section {
+  animation: sf-section-in 0.22s var(--sf-ease);
+}
+
+@keyframes sf-section-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}

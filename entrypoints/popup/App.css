@@ -1,0 +1,258 @@
+body {
+  background: var(--sf-surface);
+}
+
+.popup {
+  width: 340px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popup__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.popup__brand {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-size: inherit;
+}
+
+.popup__header-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.popup__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.capture-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--sf-radius-lg);
+  border: 1px solid var(--sf-border);
+  background: var(--sf-surface);
+  color: var(--sf-fg);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.12s,
+    background-color 0.12s,
+    transform 0.08s;
+}
+
+.capture-action:hover:not(:disabled) {
+  border-color: var(--sf-accent);
+  background: var(--sf-accent-soft);
+}
+
+.capture-action:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.capture-action:disabled {
+  cursor: default;
+}
+
+.capture-action:disabled:not([aria-busy='true']) {
+  opacity: 0.5;
+}
+
+.capture-action__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--sf-accent-soft);
+  color: var(--sf-accent-text);
+}
+
+.capture-action__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.capture-action__label {
+  font-weight: 650;
+}
+
+.capture-action__description {
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--sf-fg-muted);
+}
+
+.capture-action__kbd {
+  flex-shrink: 0;
+}
+
+.popup__progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--sf-surface-2);
+  overflow: hidden;
+}
+
+.popup__progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--sf-accent);
+  transition: width 0.3s ease;
+}
+
+.popup__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: var(--sf-radius);
+  background: var(--sf-danger-soft);
+  color: var(--sf-danger);
+  font-size: 12.5px;
+}
+
+.popup__error svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.popup__recent {
+  padding-top: 12px;
+  border-top: 1px solid var(--sf-border);
+}
+
+.popup__recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.popup__recent-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sf-fg-muted);
+}
+
+.popup__recent-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.popup__recent-thumb {
+  padding: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--sf-border);
+  background: var(--sf-surface-2);
+  cursor: pointer;
+  transition:
+    border-color 0.12s,
+    transform 0.1s;
+}
+
+.popup__recent-thumb:hover {
+  border-color: var(--sf-accent);
+  transform: translateY(-1px);
+}
+
+.popup__recent-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.popup__empty {
+  font-size: 12px;
+  color: var(--sf-fg-subtle);
+}
+
+.popup__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--sf-border);
+}
+
+.popup__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--sf-fg-muted);
+  font-size: 12px;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.popup__link:hover {
+  color: var(--sf-accent-text);
+}
+
+.popup__version {
+  font-size: 11px;
+  color: var(--sf-fg-subtle);
+  font-family: var(--sf-mono);
+}
+
+/* Entrance: actions and recents cascade in. */
+.capture-action,
+.popup__recent-thumb {
+  animation: sf-pop-in 0.32s var(--sf-ease) both;
+}
+
+.capture-action:nth-child(2) {
+  animation-delay: 40ms;
+}
+
+.capture-action:nth-child(3) {
+  animation-delay: 80ms;
+}
+
+.capture-action:nth-child(4) {
+  animation-delay: 120ms;
+}
+
+.popup__recent-thumb {
+  animation-delay: 140ms;
+}
+
+.capture-action__icon {
+  transition: transform var(--sf-duration) var(--sf-ease);
+}
+
+.capture-action:hover:not(:disabled) .capture-action__icon {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+@keyframes sf-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}

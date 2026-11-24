@@ -1,0 +1,63 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please check that the problem still happens in the latest version.
+        **Before attaching screenshots, make sure they don't contain personal data.**
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: A clear description of the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open https://example.com
+        2. Press Alt+Shift+F
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Capture (visible / area / element / full page)
+        - Editor (tools, zoom, crop)
+        - Export (PNG/JPG, copy, mockups, animation)
+        - Popup or library
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: SnapFrame version
+      description: Shown at the bottom of the popup (e.g. v1.3.0).
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: Chrome 142 on Windows 11, display scale 125%
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, console errors (right-click the editor > Inspect > Console), the page URL if public.

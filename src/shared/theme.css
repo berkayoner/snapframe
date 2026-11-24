@@ -1,0 +1,146 @@
+/*
+ * SnapFrame design tokens - see docs/brand/README.md for the full design
+ * language. Two layers:
+ *   1. Brand palette (--sf-iris-*, --sf-ink-*, --sf-spark): raw values, theme-independent.
+ *   2. Semantic tokens (--sf-bg, --sf-fg, --sf-accent, ...): what components use; redefined per theme.
+ * With no [data-theme] the OS preference wins; an explicit choice
+ * (src/shared/theme.ts) overrides it either way. Keep --sf-iris-500 in sync
+ * with CANVAS_ACCENT in src/editor/Canvas.tsx (Konva can't read CSS variables).
+ */
+:root {
+  /* Brand palette */
+  --sf-iris-50: #f4f1ff;
+  --sf-iris-100: #ebe5ff;
+  --sf-iris-200: #d6cbff;
+  --sf-iris-300: #b5a3ff;
+  --sf-iris-400: #9479ff;
+  --sf-iris-500: #7a5bff;
+  --sf-iris-600: #6640f5;
+  --sf-iris-700: #5531d6;
+  --sf-iris-800: #4428ad;
+  --sf-iris-900: #352286;
+  --sf-spark: #ffd34e;
+  --sf-gradient-brand: linear-gradient(135deg, #8f75ff 0%, #5034e6 100%);
+
+  /* Typography */
+  --sf-font:
+    'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --sf-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', Consolas, monospace;
+  --sf-text-xs: 11px;
+  --sf-text-sm: 12px;
+  --sf-text-base: 13px;
+  --sf-text-md: 14px;
+  --sf-text-lg: 16px;
+  --sf-text-xl: 20px;
+  --sf-text-2xl: 28px;
+  --sf-text-3xl: 44px;
+
+  /* Shape */
+  --sf-radius-xs: 4px;
+  --sf-radius-sm: 6px;
+  --sf-radius: 8px;
+  --sf-radius-lg: 12px;
+  --sf-radius-xl: 16px;
+  --sf-radius-2xl: 24px;
+
+  /* Motion */
+  --sf-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --sf-duration-fast: 120ms;
+  --sf-duration: 180ms;
+
+  /* Semantic tokens - light */
+  color-scheme: light;
+  --sf-bg: #f7f7fa;
+  --sf-surface: #ffffff;
+  --sf-surface-2: #f3f3f7;
+  --sf-surface-hover: #ececf3;
+  --sf-border: #e4e4ec;
+  --sf-border-strong: #cfcfdb;
+  --sf-fg: #17162b;
+  --sf-fg-muted: #5e5d72;
+  --sf-fg-subtle: #9594a8;
+  --sf-accent: var(--sf-iris-600);
+  --sf-accent-hover: var(--sf-iris-700);
+  --sf-accent-fg: #ffffff;
+  --sf-accent-soft: rgba(102, 64, 245, 0.1);
+  --sf-accent-text: var(--sf-iris-700);
+  --sf-danger: #dc3b45;
+  --sf-danger-soft: rgba(220, 59, 69, 0.1);
+  --sf-warning: #9a5b00;
+  --sf-warning-soft: rgba(255, 178, 36, 0.16);
+  --sf-success: #12a150;
+  --sf-canvas: #ececf2;
+  --sf-canvas-dots: rgba(23, 22, 43, 0.08);
+  --sf-shadow-sm: 0 1px 2px rgba(23, 16, 64, 0.06);
+  --sf-shadow: 0 4px 16px rgba(23, 16, 64, 0.08), 0 1px 3px rgba(23, 16, 64, 0.06);
+  --sf-shadow-lg: 0 24px 64px rgba(23, 16, 64, 0.18), 0 2px 8px rgba(23, 16, 64, 0.08);
+  --sf-shadow-accent: 0 6px 20px rgba(102, 64, 245, 0.32);
+  --sf-focus: 0 0 0 3px rgba(102, 64, 245, 0.32);
+  --sf-wordmark-snap: #17162b;
+  --sf-wordmark-frame: var(--sf-iris-600);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --sf-bg: #0f0e15;
+    --sf-surface: #17161f;
+    --sf-surface-2: #1f1e29;
+    --sf-surface-hover: #282736;
+    --sf-border: #2a2937;
+    --sf-border-strong: #3c3b4e;
+    --sf-fg: #eeedf5;
+    --sf-fg-muted: #a3a1b8;
+    --sf-fg-subtle: #6e6c84;
+    --sf-accent: var(--sf-iris-500);
+    --sf-accent-hover: var(--sf-iris-400);
+    --sf-accent-soft: rgba(122, 91, 255, 0.18);
+    --sf-accent-text: var(--sf-iris-300);
+    --sf-danger: #ff6369;
+    --sf-danger-soft: rgba(255, 99, 105, 0.14);
+    --sf-warning: #ffc53d;
+    --sf-warning-soft: rgba(255, 197, 61, 0.12);
+    --sf-success: #3dd68c;
+    --sf-canvas: #0a0a0f;
+    --sf-canvas-dots: rgba(255, 255, 255, 0.06);
+    --sf-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --sf-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --sf-shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+    --sf-shadow-accent: 0 6px 22px rgba(122, 91, 255, 0.35);
+    --sf-focus: 0 0 0 3px rgba(148, 121, 255, 0.45);
+    --sf-wordmark-snap: #ffffff;
+    --sf-wordmark-frame: var(--sf-iris-300);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --sf-bg: #0f0e15;
+  --sf-surface: #17161f;
+  --sf-surface-2: #1f1e29;
+  --sf-surface-hover: #282736;
+  --sf-border: #2a2937;
+  --sf-border-strong: #3c3b4e;
+  --sf-fg: #eeedf5;
+  --sf-fg-muted: #a3a1b8;
+  --sf-fg-subtle: #6e6c84;
+  --sf-accent: var(--sf-iris-500);
+  --sf-accent-hover: var(--sf-iris-400);
+  --sf-accent-soft: rgba(122, 91, 255, 0.18);
+  --sf-accent-text: var(--sf-iris-300);
+  --sf-danger: #ff6369;
+  --sf-danger-soft: rgba(255, 99, 105, 0.14);
+  --sf-warning: #ffc53d;
+  --sf-warning-soft: rgba(255, 197, 61, 0.12);
+  --sf-success: #3dd68c;
+  --sf-canvas: #0a0a0f;
+  --sf-canvas-dots: rgba(255, 255, 255, 0.06);
+  --sf-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --sf-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --sf-shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+  --sf-shadow-accent: 0 6px 22px rgba(122, 91, 255, 0.35);
+  --sf-focus: 0 0 0 3px rgba(148, 121, 255, 0.45);
+  --sf-wordmark-snap: #ffffff;
+  --sf-wordmark-frame: var(--sf-iris-300);
+}

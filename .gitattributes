@@ -1,0 +1,11 @@
+# Normalize line endings in the repository (Windows checkouts get LF too, matching .editorconfig).
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.gif binary
+*.woff2 binary
+*.zip binary
+*.mp4 binary
+*.webm binary

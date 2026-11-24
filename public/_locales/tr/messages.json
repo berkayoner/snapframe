@@ -1,0 +1,749 @@
+{
+  "extName": {
+    "message": "SnapFrame"
+  },
+  "extDescription": {
+    "message": "Ekran görüntüsü alın, üzerine not ekleyin ve güzelleştirin — tamamen cihazınızda."
+  },
+  "captureVisible": {
+    "message": "Görünen alanı yakala"
+  },
+  "captureVisibleDescription": {
+    "message": "Şu an ekranda görünen kısım"
+  },
+  "captureArea": {
+    "message": "Alan seç"
+  },
+  "captureAreaDescription": {
+    "message": "Sayfanın bir bölümünü sürükleyerek seçin"
+  },
+  "captureElement": {
+    "message": "Öğe yakala"
+  },
+  "captureElementDescription": {
+    "message": "Bir kartı, düğmeyi ya da bölümü tıklayın"
+  },
+  "overlayElementHint": {
+    "message": "Yakalamak için bir öğeye tıklayın"
+  },
+  "overlayElementNavigate": {
+    "message": "üst / alt öğe"
+  },
+  "captureFullPage": {
+    "message": "Tam sayfayı yakala"
+  },
+  "captureFullPageDescription": {
+    "message": "Sayfayı kaydırıp tamamını birleştirir"
+  },
+  "captureProgress": {
+    "message": "Yakalanıyor… $ARG1$ / $ARG2$",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      },
+      "arg2": {
+        "content": "$2"
+      }
+    }
+  },
+  "openLibrary": {
+    "message": "Kütüphaneyi aç"
+  },
+  "customizeShortcuts": {
+    "message": "Kısayolları özelleştir"
+  },
+  "recent": {
+    "message": "Son çekimler"
+  },
+  "recentEmpty": {
+    "message": "Çekimleriniz burada görünecek."
+  },
+  "viewAll": {
+    "message": "Tümünü gör"
+  },
+  "untitledCapture": {
+    "message": "Adsız çekim"
+  },
+  "themeToggle": {
+    "message": "Tema: $ARG1$",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "themeSystem": {
+    "message": "Sistem"
+  },
+  "themeLight": {
+    "message": "Açık"
+  },
+  "themeDark": {
+    "message": "Koyu"
+  },
+  "close": {
+    "message": "Kapat"
+  },
+  "cancel": {
+    "message": "İptal"
+  },
+  "done": {
+    "message": "Tamam"
+  },
+  "loading": {
+    "message": "Yükleniyor…"
+  },
+  "errorUnsupportedPage": {
+    "message": "Bu sayfa yakalanamıyor. Tarayıcı sayfaları ve eklenti mağazaları desteklenmez — normal bir web sitesinde deneyin."
+  },
+  "errorNoActiveTab": {
+    "message": "Yakalanacak etkin sekme bulunamadı."
+  },
+  "errorCaptureFailed": {
+    "message": "Yakalama başarısız oldu. Lütfen tekrar deneyin."
+  },
+  "errorAreaTooSmall": {
+    "message": "Seçilen alan yakalamak için çok küçük."
+  },
+  "errorCaptureBusy": {
+    "message": "Başka bir yakalama hâlâ sürüyor."
+  },
+  "overlayHint": {
+    "message": "Bir alan seçmek için sürükleyin"
+  },
+  "overlayCancel": {
+    "message": "ile iptal"
+  },
+  "editorTitle": {
+    "message": "SnapFrame Düzenleyici"
+  },
+  "loadingCapture": {
+    "message": "Çekim yükleniyor…"
+  },
+  "captureNotFound": {
+    "message": "Çekim bulunamadı"
+  },
+  "captureNotFoundHint": {
+    "message": "Silinmiş olabilir. Yeni bir çekim için araç çubuğundan SnapFrame'i açın."
+  },
+  "captureLoadError": {
+    "message": "Bu çekim yüklenemedi."
+  },
+  "warningTruncated": {
+    "message": "Sayfa çok uzun olduğu için çekim, tarayıcının izin verdiği en büyük görüntü yüksekliğinde kesildi."
+  },
+  "sourceVisible": {
+    "message": "Görünen alan"
+  },
+  "sourceArea": {
+    "message": "Alan"
+  },
+  "sourceFullPage": {
+    "message": "Tam sayfa"
+  },
+  "sourceUpload": {
+    "message": "İçe aktarılan"
+  },
+  "toolbarLabel": {
+    "message": "Not araçları"
+  },
+  "toolSelect": {
+    "message": "Seç"
+  },
+  "toolCrop": {
+    "message": "Kırp"
+  },
+  "toolRectangle": {
+    "message": "Dikdörtgen"
+  },
+  "toolEllipse": {
+    "message": "Elips"
+  },
+  "toolArrow": {
+    "message": "Ok"
+  },
+  "toolText": {
+    "message": "Metin"
+  },
+  "toolStep": {
+    "message": "Adım numarası"
+  },
+  "toolHighlight": {
+    "message": "Vurgula"
+  },
+  "toolBlur": {
+    "message": "Bulanıklaştır"
+  },
+  "objImage": {
+    "message": "Ekran görüntüsü"
+  },
+  "undo": {
+    "message": "Geri al"
+  },
+  "redo": {
+    "message": "Yinele"
+  },
+  "preview": {
+    "message": "Önizleme"
+  },
+  "previewTitle": {
+    "message": "Dışa aktarma önizlemesi"
+  },
+  "copy": {
+    "message": "Kopyala"
+  },
+  "copyImage": {
+    "message": "Görüntüyü kopyala"
+  },
+  "download": {
+    "message": "İndir"
+  },
+  "exportSettings": {
+    "message": "Dışa aktarma ayarları"
+  },
+  "exportFormat": {
+    "message": "Biçim"
+  },
+  "exportQuality": {
+    "message": "Kalite"
+  },
+  "exportScale": {
+    "message": "Ölçek"
+  },
+  "exportSize": {
+    "message": "$ARG1$ × $ARG2$ piksel",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      },
+      "arg2": {
+        "content": "$2"
+      }
+    }
+  },
+  "exportTooLarge": {
+    "message": "Dışa aktarmak için çok büyük ($ARG1$). 1× deneyin veya görüntüyü kırpın.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "exportFailed": {
+    "message": "Dışa aktarma başarısız oldu. Lütfen tekrar deneyin."
+  },
+  "copyFailed": {
+    "message": "Görüntü kopyalanamadı. Tarayıcınız panoya görüntü kopyalamaya izin vermiyor olabilir."
+  },
+  "toastDownloaded": {
+    "message": "Görüntü indirildi"
+  },
+  "toastCopied": {
+    "message": "Panoya kopyalandı"
+  },
+  "shortcutsTitle": {
+    "message": "Klavye kısayolları"
+  },
+  "shortcutsTools": {
+    "message": "Araçlar"
+  },
+  "shortcutsGeneral": {
+    "message": "Genel"
+  },
+  "selectAll": {
+    "message": "Tümünü seç"
+  },
+  "duplicate": {
+    "message": "Çoğalt"
+  },
+  "copyPasteObjects": {
+    "message": "Notları kopyala / yapıştır"
+  },
+  "delete": {
+    "message": "Sil"
+  },
+  "nudge": {
+    "message": "Kaydır (Shift = 10 px)"
+  },
+  "arrangeShortcut": {
+    "message": "En arkaya / en öne"
+  },
+  "constrainShortcut": {
+    "message": "Çizerken basılı tutun: kare, daire, 45° ok"
+  },
+  "zoomInOut": {
+    "message": "Yakınlaştır / uzaklaştır"
+  },
+  "zoomFit": {
+    "message": "Ekrana sığdır"
+  },
+  "zoomActualSize": {
+    "message": "Gerçek boyut (%100)"
+  },
+  "escapeShortcut": {
+    "message": "Seçimi kaldır / Seç aracına dön"
+  },
+  "zoom": {
+    "message": "Yakınlaştırma"
+  },
+  "zoomIn": {
+    "message": "Yakınlaştır"
+  },
+  "zoomOut": {
+    "message": "Uzaklaştır"
+  },
+  "cropFree": {
+    "message": "Serbest"
+  },
+  "cropApply": {
+    "message": "Uygula"
+  },
+  "cropHint": {
+    "message": "Saklanacak alanı sürükleyerek seçin"
+  },
+  "inspectorLabel": {
+    "message": "Özellikler"
+  },
+  "selectionCount": {
+    "message": "$ARG1$ öğe seçili",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "styleTitle": {
+    "message": "Stil"
+  },
+  "styleHint": {
+    "message": "Yeni notlarda kullanılır. Değiştirmek için bir not seçin."
+  },
+  "color": {
+    "message": "Renk"
+  },
+  "colorNone": {
+    "message": "Yok"
+  },
+  "colorCustom": {
+    "message": "Özel renk"
+  },
+  "strokeWidth": {
+    "message": "Çizgi kalınlığı"
+  },
+  "fill": {
+    "message": "Dolgu"
+  },
+  "fillNone": {
+    "message": "Yok"
+  },
+  "fillTint": {
+    "message": "Saydam"
+  },
+  "fillSolid": {
+    "message": "Dolu"
+  },
+  "corners": {
+    "message": "Köşeler"
+  },
+  "cornersSharp": {
+    "message": "Keskin"
+  },
+  "cornersRounded": {
+    "message": "Yuvarlak"
+  },
+  "labelColor": {
+    "message": "Etiket"
+  },
+  "textColor": {
+    "message": "Yazı rengi"
+  },
+  "fontSize": {
+    "message": "Boyut"
+  },
+  "fontFamily": {
+    "message": "Yazı tipi"
+  },
+  "fontSans": {
+    "message": "Sans-serif"
+  },
+  "fontSerif": {
+    "message": "Serif"
+  },
+  "fontMono": {
+    "message": "Eş aralıklı"
+  },
+  "bold": {
+    "message": "Kalın"
+  },
+  "textAlign": {
+    "message": "Hizalama"
+  },
+  "alignLeft": {
+    "message": "Sola hizala"
+  },
+  "alignCenter": {
+    "message": "Ortala"
+  },
+  "alignRight": {
+    "message": "Sağa hizala"
+  },
+  "textPlaceholder": {
+    "message": "Bir şeyler yazın…"
+  },
+  "stepNumber": {
+    "message": "Numara"
+  },
+  "redactMode": {
+    "message": "Mod"
+  },
+  "redactPixelate": {
+    "message": "Pikselleştir"
+  },
+  "redactBlur": {
+    "message": "Bulanıklaştır"
+  },
+  "redactStrength": {
+    "message": "Yoğunluk"
+  },
+  "bringToFront": {
+    "message": "En öne getir"
+  },
+  "sendToBack": {
+    "message": "En arkaya gönder"
+  },
+  "frameTitle": {
+    "message": "Arka plan"
+  },
+  "frameNone": {
+    "message": "Arka plan yok"
+  },
+  "frameHint": {
+    "message": "Kenar boşluğu, yuvarlak köşe ve gölge eklemek için bir arka plan seçin."
+  },
+  "frameBackground": {
+    "message": "Arka plan"
+  },
+  "framePadding": {
+    "message": "Kenar boşluğu"
+  },
+  "frameRadius": {
+    "message": "Köşe yuvarlaklığı"
+  },
+  "frameShadow": {
+    "message": "Gölge"
+  },
+  "shadowNone": {
+    "message": "Yok"
+  },
+  "shadowSoft": {
+    "message": "Hafif"
+  },
+  "shadowMedium": {
+    "message": "Orta"
+  },
+  "shadowStrong": {
+    "message": "Güçlü"
+  },
+  "bgLavender": {
+    "message": "Lavanta"
+  },
+  "bgSunset": {
+    "message": "Gün batımı"
+  },
+  "bgPeach": {
+    "message": "Şeftali"
+  },
+  "bgOcean": {
+    "message": "Okyanus"
+  },
+  "bgMint": {
+    "message": "Nane"
+  },
+  "bgViolet": {
+    "message": "Mor"
+  },
+  "bgMidnight": {
+    "message": "Gece yarısı"
+  },
+  "bgAurora": {
+    "message": "Kutup ışığı"
+  },
+  "bgWhite": {
+    "message": "Beyaz"
+  },
+  "bgGray": {
+    "message": "Gri"
+  },
+  "bgBlack": {
+    "message": "Siyah"
+  },
+  "bgTransparent": {
+    "message": "Saydam"
+  },
+  "mockupTitle": {
+    "message": "Cihaz çerçevesi"
+  },
+  "mockupNone": {
+    "message": "Yok"
+  },
+  "mockupBrowser": {
+    "message": "Tarayıcı"
+  },
+  "mockupLaptop": {
+    "message": "Dizüstü"
+  },
+  "mockupPhone": {
+    "message": "Telefon"
+  },
+  "mockupTablet": {
+    "message": "Tablet"
+  },
+  "libraryTitle": {
+    "message": "Kütüphane"
+  },
+  "libraryCount": {
+    "message": "$ARG1$ / $ARG2$ çekim",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      },
+      "arg2": {
+        "content": "$2"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "Başlık veya adrese göre ara"
+  },
+  "importImage": {
+    "message": "Görüntü içe aktar"
+  },
+  "importHint": {
+    "message": "İpucu: İçe aktarmak için bir görüntüyü yapıştırın (Ctrl+V) ya da bu sayfaya sürükleyip bırakın."
+  },
+  "dropToImport": {
+    "message": "Düzenleyicide açmak için görüntüyü bırakın"
+  },
+  "pastedImage": {
+    "message": "Yapıştırılan görüntü"
+  },
+  "importUnsupported": {
+    "message": "Bu dosya türü desteklenmiyor. PNG, JPG, WebP, GIF veya BMP kullanın."
+  },
+  "importTooLarge": {
+    "message": "Bu görüntü tarayıcıda düzenlemek için çok büyük."
+  },
+  "importFailed": {
+    "message": "Görüntü okunamadı."
+  },
+  "libraryEmptyTitle": {
+    "message": "Henüz çekim yok"
+  },
+  "libraryEmptyBody": {
+    "message": "İlk ekran görüntünüz için herhangi bir sitede SnapFrame simgesine tıklayın ya da Alt+Shift+S tuşlarına basın."
+  },
+  "noResults": {
+    "message": "Aramanızla eşleşen çekim yok."
+  },
+  "openInEditor": {
+    "message": "“$ARG1$” çekimini düzenleyicide aç",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadOriginal": {
+    "message": "Orijinali indir"
+  },
+  "clearAll": {
+    "message": "Tümünü temizle"
+  },
+  "clearAllTitle": {
+    "message": "Tüm çekimler silinsin mi?"
+  },
+  "clearAllBody": {
+    "message": "Tüm çekimler ve üzerlerindeki düzenlemeler bu cihazdan kalıcı olarak silinecek."
+  },
+  "deleteTitle": {
+    "message": "Bu çekim silinsin mi?"
+  },
+  "deleteBody": {
+    "message": "Ekran görüntüsü ve düzenlemeleri bu cihazdan kalıcı olarak silinecek."
+  },
+  "deleteFailed": {
+    "message": "Silinemedi. Lütfen tekrar deneyin."
+  },
+  "toastDeleted": {
+    "message": "Çekim silindi"
+  },
+  "toastCleared": {
+    "message": "Kütüphane temizlendi"
+  },
+  "welcomeDocTitle": {
+    "message": "Hoş geldiniz"
+  },
+  "welcomeEyebrow": {
+    "message": "SnapFrame'e hoş geldiniz"
+  },
+  "welcomeTitle": {
+    "message": "Bitmiş görünen ekran görüntüleri."
+  },
+  "welcomeSubtitle": {
+    "message": "Herhangi bir sayfayı yakalayın, üzerine not ekleyin ve şık bir görsel olarak dışa aktarın — saniyeler içinde, tarayıcıdan çıkmadan."
+  },
+  "welcomeStepsLabel": {
+    "message": "Başlarken"
+  },
+  "welcomeStep1Title": {
+    "message": "SnapFrame'i sabitleyin"
+  },
+  "welcomeStep1Body": {
+    "message": "Araç çubuğundaki yapboz simgesine tıklayın ve SnapFrame'i sabitleyin; tek tıkla yakalayın."
+  },
+  "welcomeStep2Title": {
+    "message": "Yakalayın"
+  },
+  "welcomeStep2Body": {
+    "message": "Herhangi bir sitede araç çubuğu düğmesini, sağ tık menüsünü ya da şu kısayolları kullanın:"
+  },
+  "welcomeStep3Title": {
+    "message": "Güzelleştirin ve paylaşın"
+  },
+  "welcomeStep3Body": {
+    "message": "Not ekleyin, hassas bilgileri gizleyin, arka plan ya da cihaz çerçevesi ekleyin — sonra kopyalayın veya indirin."
+  },
+  "welcomePrivacyTitle": {
+    "message": "Tasarımı gereği gizli"
+  },
+  "welcomePrivacyBody": {
+    "message": "Hesap yok, yükleme yok, takip yok. Çekimleriniz bu tarayıcıdan hiç çıkmaz."
+  },
+  "shortcutNotSet": {
+    "message": "Atanmadı"
+  },
+  "sensitiveEmail": {
+    "message": "e-posta"
+  },
+  "sensitivePhone": {
+    "message": "telefon"
+  },
+  "sensitiveCard": {
+    "message": "kart numarası"
+  },
+  "sensitiveIban": {
+    "message": "IBAN"
+  },
+  "sensitiveNationalId": {
+    "message": "kimlik numarası"
+  },
+  "sensitiveSecret": {
+    "message": "API anahtarı"
+  },
+  "redactFound": {
+    "message": "Hassas bilgi bulundu ($ARG1$)",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "redactAll": {
+    "message": "Tümünü gizle"
+  },
+  "redactShow": {
+    "message": "Yerlerini göster"
+  },
+  "redactHide": {
+    "message": "İşaretleri gizle"
+  },
+  "redactDone": {
+    "message": "Hassas bilgiler gizlendi ($ARG1$)",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "privacyTitle": {
+    "message": "Gizlilik"
+  },
+  "privacyAllCovered": {
+    "message": "Bulunan tüm hassas bilgiler gizlendi."
+  },
+  "magneticTitle": {
+    "message": "Mıknatıslı çizim"
+  },
+  "magneticHint": {
+    "message": "Şekiller sayfadaki öğelere yapışır; tıklayınca öğeyi çerçeveler. Serbest çizim için Alt'a basılı tutun."
+  },
+  "copied": {
+    "message": "Kopyalandı"
+  },
+  "downloaded": {
+    "message": "İndirildi"
+  },
+  "animate": {
+    "message": "Canlandır"
+  },
+  "animateTooltip": {
+    "message": "Notların sırayla belirdiği kısa bir klip olarak dışa aktar"
+  },
+  "animateTitle": {
+    "message": "Animasyonlu dışa aktarma"
+  },
+  "animateSpeed": {
+    "message": "Hız"
+  },
+  "speedSlow": {
+    "message": "Yavaş"
+  },
+  "speedNormal": {
+    "message": "Normal"
+  },
+  "speedFast": {
+    "message": "Hızlı"
+  },
+  "animateCamera": {
+    "message": "Kamera notları takip etsin"
+  },
+  "animateCameraHint": {
+    "message": "Her not belirirken ona yakınlaşır."
+  },
+  "animateExport": {
+    "message": "$ARG1$ olarak dışa aktar",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "animateDuration": {
+    "message": "$ARG1$ sn",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  },
+  "animateDone": {
+    "message": "Animasyon kaydedildi"
+  },
+  "animateFailed": {
+    "message": "Animasyon oluşturulamadı."
+  },
+  "animateEmpty": {
+    "message": "Ok, kutu, etiket ya da adım ekleyin — sırayla belirecekler."
+  },
+  "animateMp4Unsupported": {
+    "message": "Bu tarayıcı MP4 oluşturamıyor — WebM ya da GIF kullanın."
+  },
+  "privacyNote": {
+    "message": "Her şey bu cihazda kalır, hiçbir şey yüklenmez. En son $ARG1$ çekim saklanır.",
+    "placeholders": {
+      "arg1": {
+        "content": "$1"
+      }
+    }
+  }
+}
