@@ -1,0 +1,268 @@
+.viewport {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  background-color: var(--sf-canvas);
+  background-image: radial-gradient(var(--sf-canvas-dots) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.viewport__scroller {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  /*
+   * Always reserve the vertical scrollbar's space, so the available width
+   * never changes when a scrollbar appears or disappears - otherwise
+   * fit-to-screen could flip between two zoom levels.
+   */
+  scrollbar-gutter: stable;
+}
+
+/* While fitting, the picture always fits the width: never show a horizontal scrollbar. */
+.viewport__scroller--fit {
+  overflow-x: hidden;
+}
+
+.viewport__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100%;
+  min-height: 100%;
+  width: max-content;
+  /* Keep in sync with CONTENT_PADDING in CanvasViewport.tsx. Bottom room keeps the zoom bar off the canvas. */
+  padding: 32px 32px 72px;
+}
+
+.beautify-frame {
+  flex-shrink: 0;
+  line-height: 0;
+  box-shadow: var(--sf-shadow);
+}
+
+.beautify-frame--transparent {
+  background: repeating-conic-gradient(rgba(128, 128, 128, 0.18) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px !important;
+  box-shadow: none;
+}
+
+/* No background chosen: the screenshot (or device) sits on the canvas as-is. */
+.beautify-frame--plain {
+  box-shadow: none;
+}
+
+/* Editor-only outline so a white screenshot doesn't melt into the canvas; never exported. */
+.beautify-frame--plain:not(.beautify-frame--device) .beautify-frame__content {
+  box-shadow:
+    0 0 0 1px var(--sf-border-strong),
+    var(--sf-shadow);
+}
+
+.beautify-frame__content {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Device mockups (geometry from src/mockups/geometry.ts). */
+.device {
+  position: relative;
+}
+
+.device__body,
+.device__base,
+.device__screen,
+.device__ring {
+  position: absolute;
+}
+
+.device__body {
+  overflow: hidden;
+}
+
+.device__base {
+  background: linear-gradient(#e4e4e9, #a6a6ae);
+}
+
+.device__notch {
+  position: absolute;
+  top: 0;
+  background: #8d8d95;
+}
+
+.device__toolbar {
+  position: relative;
+}
+
+.device__dot,
+.device__address {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.device__address {
+  border-radius: 999px;
+}
+
+.device__screen {
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.device__ring,
+.device__dot {
+  pointer-events: none;
+}
+
+.canvas-shell {
+  position: relative;
+}
+
+.text-editor-overlay {
+  position: absolute;
+  z-index: 10;
+  margin: 0;
+  border: 0;
+  outline: 2px solid var(--sf-iris-500);
+  outline-offset: 2px;
+  resize: none;
+  overflow: hidden;
+  white-space: pre;
+  line-height: 1.25;
+  box-shadow: none;
+}
+
+.text-editor-overlay::placeholder {
+  color: currentColor;
+  opacity: 0.55;
+}
+
+/* Floating bars over the canvas */
+.floating-bar {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--sf-border);
+  background: var(--sf-surface);
+  box-shadow: var(--sf-shadow);
+}
+
+.floating-bar__divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 2px;
+  background: var(--sf-border);
+}
+
+.zoom-controls__value {
+  min-width: 56px;
+  height: 28px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--sf-fg);
+  font-family: var(--sf-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.zoom-controls__value:hover {
+  background: var(--sf-surface-hover);
+}
+
+.crop-bar {
+  gap: 8px;
+  padding: 6px;
+}
+
+.crop-bar__ratios {
+  border: 0;
+}
+
+.crop-bar__ratios .segmented__item {
+  padding: 0 9px;
+}
+
+.crop-bar__size {
+  padding: 0 4px;
+  font-family: var(--sf-mono);
+  font-size: 11.5px;
+  color: var(--sf-fg-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Smart suggestion bar (page-aware features), floating over the top of the canvas. */
+.smart-bar {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  z-index: 7;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 32px);
+  padding: 6px 6px 6px 8px;
+  border-radius: 14px;
+  border: 1px solid var(--sf-border);
+  background: var(--sf-surface);
+  box-shadow: var(--sf-shadow-lg);
+  animation: sf-bar-in 0.34s var(--sf-ease);
+}
+
+.smart-bar__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: rgba(255, 59, 48, 0.12);
+  color: #e5352b;
+}
+
+.smart-bar__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+  font-size: var(--sf-text-sm);
+}
+
+.smart-bar__detail {
+  color: var(--sf-fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes sf-bar-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.98);
+  }
+}
+
+/* The capture arrives with a soft rise-and-focus when the editor opens. */
+.viewport__content > .beautify-frame {
+  animation: sf-canvas-in 0.5s var(--sf-ease) both;
+}
+
+@keyframes sf-canvas-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+    filter: blur(6px);
+  }
+}

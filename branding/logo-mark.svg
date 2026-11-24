@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="sf-tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8F75FF"/>
+      <stop offset="1" stop-color="#5034E6"/>
+    </linearGradient>
+    <radialGradient id="sf-sheen" cx="0.2" cy="0.1" r="0.95">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.3"/>
+      <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#sf-tile)"/>
+  <rect width="128" height="128" rx="30" fill="url(#sf-sheen)"/>
+  <rect x="0.75" y="0.75" width="126.5" height="126.5" rx="29.25" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1.5"/>
+  <path d="M33 64V45a12 12 0 0 1 12-12h19M95 64v19a12 12 0 0 1-12 12H64" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+  <path d="M82 29Q85.2 42.8 99 46Q85.2 49.2 82 63Q78.8 49.2 65 46Q78.8 42.8 82 29Z" fill="#FFD34E"/>
+</svg>
