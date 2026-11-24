@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-11-24
+
+### Fixed
+
+- The animated export failed ("Couldn't create the animation") whenever the
+  picture contained a highlight, a magnifier or a spotlight. An end-to-end
+  test now animates every annotation type together.
+
 ## [1.4.0] - 2026-11-24
 
 ### Added

@@ -2,7 +2,7 @@
   "name": "snapframe",
   "description": "Capture, annotate and beautify screenshots — entirely on your device.",
   "private": true,
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "MIT",
   "author": "Berkay Öner",
   "homepage": "https://github.com/berkayoner/snapframe#readme",

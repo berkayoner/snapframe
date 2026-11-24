@@ -92,6 +92,17 @@ function perimeterOf(object: EditorObject): number {
   return 2 * (w + h);
 }
 
+/**
+ * A shape's own dash pattern (a dashed outline), to restore after the
+ * outline-drawing reveal. Konva leaves `dash` undefined on shapes that never
+ * set one (highlights, lenses, spotlights, ...).
+ */
+function ownDash(node: Konva.Node): { dash: number[]; dashEnabled: boolean } {
+  if (!(node instanceof Konva.Shape)) return { dash: [], dashEnabled: false };
+  const dash = (node.dash() as number[] | undefined) ?? [];
+  return { dash, dashEnabled: node.dashEnabled() && dash.length > 0 };
+}
+
 /** Puts one annotation into its entrance state at progress `p` (0..1). */
 function applyEntrance(entry: AnimatedNode, p: number): void {
   const { node, object } = entry;
@@ -240,8 +251,7 @@ export async function createAnimationScene(stage: Konva.Stage, options: SceneOpt
       y: node.y(),
       opacity: object.opacity ?? 1,
       perimeter: perimeterOf(object),
-      dash: node instanceof Konva.Shape ? node.dash() : [],
-      dashEnabled: node instanceof Konva.Shape ? node.dashEnabled() && node.dash().length > 0 : false,
+      ...ownDash(node),
     });
   }
 

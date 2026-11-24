@@ -895,6 +895,83 @@ try {
     await editor.close();
   });
 
+  await step('animate: every annotation type animates (preview and export)', async () => {
+    await page.bringToFront();
+    await page.goto(`${origin}/plain`);
+    const editor = await waitForEditor(context, () =>
+      worker.evaluate(() => globalThis.__snapframeTest.runVisibleCapture(1)),
+    );
+    const errors = [];
+    editor.on('console', (message) => {
+      if (message.type() === 'error') errors.push(message.text());
+    });
+    await editor.evaluate(() => {
+      const store = window.__snapframeEditor.getState();
+      const add = (object) => store.addObject({ id: crypto.randomUUID(), ...object });
+      const red = '#ff3b30';
+      add({ type: 'blur', x: 120, y: 120, width: 80, height: 40, style: { mode: 'pixelate', strength: 12 } });
+      add({
+        type: 'spotlight',
+        x: 380,
+        y: 80,
+        width: 520,
+        height: 360,
+        style: { dim: 0.5, shape: 'rounded', radius: 12 },
+      });
+      add({
+        type: 'shape',
+        x: 400,
+        y: 100,
+        width: 200,
+        height: 120,
+        style: { stroke: red, strokeWidth: 4, dashed: true },
+      });
+      add({ type: 'ellipse', x: 650, y: 100, width: 200, height: 120, style: { stroke: red, strokeWidth: 4 } });
+      add({
+        type: 'arrow',
+        x: 700,
+        y: 420,
+        width: 150,
+        height: -100,
+        style: { stroke: red, strokeWidth: 4, heads: 'both' },
+      });
+      add({ type: 'highlight', x: 400, y: 600, width: 300, height: 40, style: { color: '#ffcc00' } });
+      add({ type: 'step', x: 900, y: 600, width: 30, height: 30, style: { color: red, number: 1 } });
+      add({
+        type: 'text',
+        x: 900,
+        y: 200,
+        width: 160,
+        height: 40,
+        style: { text: 'Hello', fontSize: 18, color: '#fff', backgroundColor: '#6640f5', padding: 8, cornerRadius: 6 },
+      });
+      add({
+        type: 'magnify',
+        x: 240,
+        y: 130,
+        width: 140,
+        height: 140,
+        style: { zoom: 2, shape: 'circle', color: '#fff' },
+      });
+      store.clearSelection();
+    });
+    await editor.waitForTimeout(600);
+    await editor.getByRole('button', { name: /^(animate|canlandır)(\s|$)/i }).click();
+    await editor.waitForSelector('.animate__canvas', { timeout: 10_000 });
+    await editor.waitForTimeout(1500); // let the preview play a while
+    assert.equal(await editor.locator('.animate__message').count(), 0, 'the scene must build');
+    await editor.screenshot({ path: path.join(artifacts, `editor-animate-all-${lang}.png`) });
+    const formats = editor.locator('.animate__controls .segmented').first();
+    await formats.getByRole('button', { name: 'WebM', exact: true }).click();
+    const downloadPromise = editor.waitForEvent('download', { timeout: 180_000 });
+    await editor.locator('.dialog__footer .btn--primary').click();
+    const file = path.join(artifacts, `animation-all-${lang}.webm`);
+    await (await downloadPromise).saveAs(file);
+    assert.ok((await readFile(file)).length > 10_000, 'a real video was written');
+    assert.deepEqual(errors, []);
+    await editor.close();
+  });
+
   let options;
 
   await step('settings page renders and saves', async () => {
