@@ -3,7 +3,12 @@ import type Konva from 'konva';
 import { Clapperboard, LoaderCircle, Sparkles } from 'lucide-react';
 import { Dialog } from '@/src/shared/Dialog';
 import { Field, Segmented } from '@/src/editor/inspector/controls';
-import { createAnimationScene, fitOutputSize, type AnimationScene } from '@/src/export/animate/scene';
+import {
+  createAnimationScene,
+  fitOutputSize,
+  type AnimationMode,
+  type AnimationScene,
+} from '@/src/export/animate/scene';
 import {
   EncodeCancelledError,
   encodeAnimation,
@@ -12,10 +17,12 @@ import {
   VIDEO_MAX_SIDE,
   type AnimationFormat,
 } from '@/src/export/animate/encode';
-import type { AnimationSpeed } from '@/src/export/animate/timeline';
-import { buildExportFileName, downloadBlob } from '@/src/export/png';
+import { canScroll, type AnimationSpeed } from '@/src/export/animate/timeline';
+import { downloadBlob, exportFileNameFor } from '@/src/export/png';
 import { useEditorStore } from '@/src/editor/store/editorStore';
+import { finishEntranceAnimations } from '@/src/editor/Canvas';
 import { t } from '@/src/shared/i18n';
+import { loadPrefs, savePrefs, type AnimationPrefs } from '@/src/shared/prefs';
 import { toast } from '@/src/shared/toast';
 import type { CaptureRecord } from '@/src/storage/db';
 
@@ -28,19 +35,60 @@ interface AnimateDialogProps {
 
 const PREVIEW_MAX = { width: 880, height: 460 };
 
+function SwitchRow({
+  title,
+  hint,
+  checked,
+  disabled,
+  onChange,
+}: {
+  title: string;
+  hint: string;
+  checked: boolean;
+  disabled?: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className="switch-row">
+      <span className="switch-row__text">
+        <span className="switch-row__title">{title}</span>
+        <span className="switch-row__hint">{hint}</span>
+      </span>
+      <input
+        type="checkbox"
+        role="switch"
+        className="switch"
+        checked={checked}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+    </label>
+  );
+}
+
 /**
- * Animated export: annotations appear one by one (optionally with a camera
- * that glides to each), exported as MP4, WebM or GIF - all on-device. The
- * preview plays the exact frames the encoder will render.
+ * Animated export, all on-device, as MP4, WebM or GIF. Notes mode: the
+ * annotations appear one by one, optionally with a camera that glides to
+ * each and a pointer that clicks them into place. Scroll mode (tall
+ * captures): the page scrolls by inside its frame. The preview plays the
+ * exact frames the encoder will render.
  */
 export function AnimateDialog({ open, onClose, stageRef, record }: AnimateDialogProps) {
+  const canvasWidth = useEditorStore((state) => state.canvasWidth);
+  const canvasHeight = useEditorStore((state) => state.canvasHeight);
+  const unit = useEditorStore((state) => state.unit);
+  const scrollable = canScroll(canvasWidth, canvasHeight, unit, record.viewport);
+  const [saved] = useState(() => loadPrefs().animation);
   const [scene, setScene] = useState<AnimationScene | null>(null);
   const [failed, setFailed] = useState(false);
   const [formats, setFormats] = useState<Record<AnimationFormat, boolean> | null>(null);
-  const [format, setFormat] = useState<AnimationFormat>('mp4');
-  const [speed, setSpeed] = useState<AnimationSpeed>('normal');
-  const [focus, setFocus] = useState(true);
+  const [preferredMode, setMode] = useState<AnimationMode>(record.sourceType === 'full-page' ? 'scroll' : 'notes');
+  const [format, setFormat] = useState<AnimationFormat>(saved.format);
+  const [speed, setSpeed] = useState<AnimationSpeed>(saved.speed);
+  const [focus, setFocus] = useState(saved.focus);
+  const [cursor, setCursor] = useState(saved.cursor);
   const [progress, setProgress] = useState<number | null>(null);
+  const mode: AnimationMode = scrollable ? preferredMode : 'notes';
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const playheadRef = useRef<HTMLSpanElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -53,12 +101,14 @@ export function AnimateDialog({ open, onClose, stageRef, record }: AnimateDialog
     let built: AnimationScene | null = null;
     const stage = stageRef.current;
     if (!stage) return;
-    // Commit any in-progress text edit so the label is part of the animation.
+    // Commit any in-progress text edit so the label is part of the animation, and settle
+    // entrance animations so no annotation is cloned half-faded.
     if (useEditorStore.getState().editingTextId) (document.activeElement as HTMLElement | null)?.blur();
+    finishEntranceAnimations();
 
     setTimeout(async () => {
       try {
-        built = await createAnimationScene(stage, { speed, focus });
+        built = await createAnimationScene(stage, { mode, speed, focus, cursor, viewport: record.viewport });
         if (cancelled) {
           built.dispose();
           return;
@@ -83,15 +133,19 @@ export function AnimateDialog({ open, onClose, stageRef, record }: AnimateDialog
       setFailed(false);
       setProgress(null);
     };
-    // The scene is rebuilt only per opening; speed/focus are applied to it below.
+    // The scene is rebuilt per opening and per mode; speed/focus/cursor are applied to it below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, stageRef]);
+  }, [open, mode, stageRef]);
 
   useEffect(() => {
     if (!scene) return;
-    scene.setOptions({ speed, focus });
+    scene.setOptions({ speed, focus, cursor });
     clockRef.current = performance.now();
-  }, [scene, speed, focus]);
+  }, [scene, speed, focus, cursor]);
+
+  function remember(partial: Partial<AnimationPrefs>) {
+    savePrefs({ animation: { format, speed, focus, cursor, ...partial } });
+  }
 
   // Live preview loop (paused while encoding - the encoder drives the same scene).
   useEffect(() => {
@@ -122,7 +176,7 @@ export function AnimateDialog({ open, onClose, stageRef, record }: AnimateDialog
         signal: controller.signal,
         onProgress: (fraction) => setProgress(fraction),
       });
-      downloadBlob(blob, buildExportFileName(record.sourceUrl, record.createdAt, format));
+      downloadBlob(blob, exportFileNameFor(record, format));
       toast.success(t('animateDone'));
     } catch (error) {
       if (!(error instanceof EncodeCancelledError)) {
@@ -143,7 +197,7 @@ export function AnimateDialog({ open, onClose, stageRef, record }: AnimateDialog
     ? fitOutputSize(scene.width, scene.height, format === 'gif' ? GIF_MAX_SIDE : VIDEO_MAX_SIDE)
     : null;
   const encoding = progress !== null;
-  const empty = scene?.itemCount === 0;
+  const empty = scene?.mode === 'notes' && scene.itemCount === 0;
 
   return (
     <Dialog
@@ -214,11 +268,27 @@ export function AnimateDialog({ open, onClose, stageRef, record }: AnimateDialog
           )}
         </div>
         <div className="animate__controls">
+          {scrollable && (
+            <Field label={t('animateMode')}>
+              <Segmented<AnimationMode>
+                label={t('animateMode')}
+                value={mode}
+                onChange={setMode}
+                options={[
+                  { value: 'notes', label: t('animateModeNotes'), disabled: encoding },
+                  { value: 'scroll', label: t('animateModeScroll'), disabled: encoding },
+                ]}
+              />
+            </Field>
+          )}
           <Field label={t('exportFormat')}>
             <Segmented<AnimationFormat>
               label={t('exportFormat')}
               value={format}
-              onChange={setFormat}
+              onChange={(next) => {
+                setFormat(next);
+                remember({ format: next });
+              }}
               options={[
                 {
                   value: 'mp4',
@@ -235,7 +305,10 @@ export function AnimateDialog({ open, onClose, stageRef, record }: AnimateDialog
             <Segmented<AnimationSpeed>
               label={t('animateSpeed')}
               value={speed}
-              onChange={setSpeed}
+              onChange={(next) => {
+                setSpeed(next);
+                remember({ speed: next });
+              }}
               options={[
                 { value: 'slow', label: t('speedSlow') },
                 { value: 'normal', label: t('speedNormal') },
@@ -243,20 +316,32 @@ export function AnimateDialog({ open, onClose, stageRef, record }: AnimateDialog
               ]}
             />
           </Field>
-          <label className="switch-row">
-            <span className="switch-row__text">
-              <span className="switch-row__title">{t('animateCamera')}</span>
-              <span className="switch-row__hint">{t('animateCameraHint')}</span>
-            </span>
-            <input
-              type="checkbox"
-              role="switch"
-              className="switch"
-              checked={focus}
-              disabled={encoding}
-              onChange={(event) => setFocus(event.target.checked)}
-            />
-          </label>
+          {mode === 'notes' ? (
+            <>
+              <SwitchRow
+                title={t('animateCamera')}
+                hint={t('animateCameraHint')}
+                checked={focus}
+                disabled={encoding}
+                onChange={(next) => {
+                  setFocus(next);
+                  remember({ focus: next });
+                }}
+              />
+              <SwitchRow
+                title={t('animateCursor')}
+                hint={t('animateCursorHint')}
+                checked={cursor}
+                disabled={encoding}
+                onChange={(next) => {
+                  setCursor(next);
+                  remember({ cursor: next });
+                }}
+              />
+            </>
+          ) : (
+            <p className="animate__hint">{t('animateScrollHint')}</p>
+          )}
         </div>
       </div>
     </Dialog>

@@ -2,17 +2,27 @@ import { useRef, useState } from 'react';
 import { useEditorStore } from '@/src/editor/store/editorStore';
 import { snapVectorTo45, squareVector, type Point } from '@/src/editor/tools/pointer';
 import { DEFAULT_BLUR_STYLE } from '@/src/annotations/blur/blurStyle';
+import { DEFAULT_MAGNIFY_STYLE, MAGNIFY_DEFAULT_SIZE } from '@/src/annotations/magnify/magnifyStyle';
+import { DEFAULT_SPOTLIGHT_STYLE } from '@/src/annotations/spotlight/spotlightStyle';
 import { canvasBoxes, snapThreshold } from '@/src/editor/smart/canvasBoxes';
 import { boxAtPoint, expandRect, snapRect, type Rect, type SnapGuide } from '@/src/editor/smart/snap';
 import type { EditorObject, EditorObjectType } from '@/src/shared/types';
 
 /** Drag-to-create tools. */
-export type DrawableTool = 'rectangle' | 'ellipse' | 'arrow' | 'highlight' | 'blur';
+export type DrawableTool = 'rectangle' | 'ellipse' | 'arrow' | 'highlight' | 'blur' | 'magnify' | 'spotlight';
 
-export const DRAWABLE_TOOLS = new Set<string>(['rectangle', 'ellipse', 'arrow', 'highlight', 'blur']);
+export const DRAWABLE_TOOLS = new Set<string>([
+  'rectangle',
+  'ellipse',
+  'arrow',
+  'highlight',
+  'blur',
+  'magnify',
+  'spotlight',
+]);
 
 /** Tools that can frame a page element with a single click. */
-export const FRAMING_TOOLS = new Set<string>(['rectangle', 'ellipse', 'highlight', 'blur']);
+export const FRAMING_TOOLS = new Set<string>(['rectangle', 'ellipse', 'highlight', 'blur', 'spotlight']);
 
 const OBJECT_TYPE_BY_TOOL: Record<DrawableTool, EditorObjectType> = {
   rectangle: 'shape',
@@ -20,6 +30,8 @@ const OBJECT_TYPE_BY_TOOL: Record<DrawableTool, EditorObjectType> = {
   arrow: 'arrow',
   highlight: 'highlight',
   blur: 'blur',
+  magnify: 'magnify',
+  spotlight: 'spotlight',
 };
 
 /** Minimum drag distance (screen px) before a drag counts as drawing rather than a click. */
@@ -34,6 +46,10 @@ function styleFor(tool: DrawableTool, color: string, strokeWidth: number, unit: 
       return { color };
     case 'blur':
       return { ...DEFAULT_BLUR_STYLE, strength: Math.round(DEFAULT_BLUR_STYLE.strength * unit) };
+    case 'magnify':
+      return { ...DEFAULT_MAGNIFY_STYLE, color, ringWidth: DEFAULT_MAGNIFY_STYLE.ringWidth * unit };
+    case 'spotlight':
+      return { ...DEFAULT_SPOTLIGHT_STYLE, radius: Math.round(DEFAULT_SPOTLIGHT_STYLE.radius * unit) };
     case 'rectangle':
     case 'ellipse':
     default:
@@ -95,7 +111,8 @@ export function useShapeDrawingTool(activeTool: DrawableTool | null) {
 
     let dx = pos.x - start.x;
     let dy = pos.y - start.y;
-    if (constrain) {
+    // Lenses are drawn as circles.
+    if (constrain || activeTool === 'magnify') {
       ({ dx, dy } = activeTool === 'arrow' ? snapVectorTo45(dx, dy) : squareVector(dx, dy));
     }
 
@@ -112,8 +129,8 @@ export function useShapeDrawingTool(activeTool: DrawableTool | null) {
     };
     const { snapEnabled, pageData, objects, zoom } = useEditorStore.getState();
     let nextGuides: SnapGuide[] = [];
-    // Shift (square) wins over snapping; Alt bypasses it.
-    if (snapEnabled && pageData && !constrain && !bypassSnap) {
+    // Shift (square) wins over snapping; Alt bypasses it. Lenses never snap.
+    if (snapEnabled && pageData && !constrain && !bypassSnap && activeTool !== 'magnify') {
       const snapped = snapRect(rect, canvasBoxes(pageData, objects), snapThreshold(zoom));
       rect = snapped.rect;
       nextGuides = snapped.guides;
@@ -131,13 +148,24 @@ export function useShapeDrawingTool(activeTool: DrawableTool | null) {
 
     if (current && !isClick) {
       addObject(current);
+    } else if (current && start && activeTool === 'magnify') {
+      // A click drops a lens of the default size, centered on the pointer.
+      const size = MAGNIFY_DEFAULT_SIZE * unit;
+      addObject(
+        { ...current, x: start.x - size / 2, y: start.y - size / 2, width: size, height: size },
+        { animate: true },
+      );
     } else if (current && start && activeTool && FRAMING_TOOLS.has(activeTool)) {
       // A click frames the element under the pointer.
       const target = frameTargetAt(start, bypassRef.current);
       if (target) {
         const style = current.style ?? {};
         const outset =
-          activeTool === 'rectangle' || activeTool === 'ellipse' ? Number(style.strokeWidth ?? 0) / 2 + 3 * unit : 0;
+          activeTool === 'rectangle' || activeTool === 'ellipse'
+            ? Number(style.strokeWidth ?? 0) / 2 + 3 * unit
+            : activeTool === 'spotlight'
+              ? 6 * unit
+              : 0;
         addObject({ ...current, ...expandRect(target, outset) }, { animate: true });
       }
     }

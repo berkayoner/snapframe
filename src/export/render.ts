@@ -51,6 +51,11 @@ export function predictOutputSize(options: RenderOptions): { width: number; heig
  * and no mockup selected, the screenshot is exported untouched.
  */
 export async function renderFinalCanvas(stage: Konva.Stage, options: RenderOptions): Promise<HTMLCanvasElement> {
+  return renderFinalCanvasNow(stage, options);
+}
+
+/** Synchronous form of renderFinalCanvas, for work that must finish in the current task (e.g. while a tab closes). */
+export function renderFinalCanvasNow(stage: Konva.Stage, options: RenderOptions): HTMLCanvasElement {
   const predicted = predictOutputSize(options);
   if (!fitsCanvasLimits(predicted.width, predicted.height)) {
     throw new ExportTooLargeError(`${predicted.width}x${predicted.height}`);
@@ -78,15 +83,25 @@ export async function renderFinalCanvas(stage: Konva.Stage, options: RenderOptio
     stage.batchDraw();
   }
 
-  const scale = options.unit * options.exportScale;
-  const frameActive = isFrameActive(options.beautify);
-  let result: HTMLCanvasElement;
-  if (options.mockup) {
-    const device = drawDevice(content, deviceGeometry(options.mockup.type, content.width, content.height, scale));
-    result = frameActive ? composeFramedObject(device, options.beautify, scale) : device;
-  } else {
-    result = frameActive ? composeBeautifiedCanvas(content, options.beautify, scale) : content;
-  }
-
+  const result = composeFrame(content, options.beautify, options.mockup, options.unit * options.exportScale);
   return options.opaque ? flattenOnWhite(result) : result;
+}
+
+/**
+ * Puts finished content into its device frame and/or background. `scale`
+ * converts source-page CSS px to the content's pixels. Returns the content
+ * itself when neither is selected.
+ */
+export function composeFrame(
+  content: HTMLCanvasElement,
+  beautify: BeautifySettings,
+  mockup: MockupConfig | undefined,
+  scale: number,
+): HTMLCanvasElement {
+  const frameActive = isFrameActive(beautify);
+  if (mockup) {
+    const device = drawDevice(content, deviceGeometry(mockup.type, content.width, content.height, scale));
+    return frameActive ? composeFramedObject(device, beautify, scale) : device;
+  }
+  return frameActive ? composeBeautifiedCanvas(content, beautify, scale) : content;
 }

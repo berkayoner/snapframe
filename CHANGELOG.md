@@ -6,6 +6,60 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-24
+
+### Added
+
+- **Magnifier:** a loupe (circle or rounded square, 1.5–4×) that enlarges
+  the screenshot under it, live while dragging and crisp at 2× export.
+  Redactions under a lens stay redacted inside it.
+- **Spotlight:** dims everything outside a rectangle, rounded rectangle or
+  ellipse. Several spotlights merge into one dimming, annotations stay bright
+  on top, and a single click frames the element under the pointer.
+- **Virtual pointer** in animated exports: it glides to each annotation and
+  clicks it into place, dragging arrows and highlights along their stroke.
+- **Page scroll animation** for full-page captures: the page scrolls from top
+  to bottom inside its frame (sized to the captured browser window), and
+  annotations appear as they come into view.
+- **Settings page:**
+  - After a capture: open the editor, copy to the clipboard, or download.
+    Quick actions are confirmed by a card in the page with an Edit button,
+    and fall back to the editor if they fail.
+  - File name template for every download (`{site}`, `{title}`, `{date}`,
+    `{time}`).
+  - Library size (30, 60 or 120 captures).
+  - Page awareness can be turned off; the page is then not read at all.
+- The animated export remembers its last-used settings.
+- **Line styles:** dashed outlines for rectangles, ellipses and arrows, and
+  arrows with a head at one end, at both ends or none (a plain line).
+- **Hand tool:** hold Space and drag, or drag with the middle mouse button,
+  to move around a zoomed-in capture.
+- The library and the popup show the edited picture (annotations, frame and
+  mockup) from small thumbnails, so a large library opens quickly. Older
+  captures get their thumbnails the first time the library is opened.
+- A Settings button on the welcome page.
+- A fifth store screenshot showing the spotlight and the magnifier.
+
+### Changed
+
+- Permissions: `offscreen` is added (it turns a saved capture into a
+  download link), and `downloads` is optional, requested only for direct
+  downloads.
+- Redactions are drawn directly on the screenshot, below spotlights and
+  annotations.
+- GIF palettes are sampled across the whole clip, so scrolling pages keep
+  their colors.
+
+### Fixed
+
+- Exporting right after placing a step, label or lens could capture it
+  half-faded in. Entrance animations now finish before any export.
+- An area selection dragged past the edge of the window is clipped to the
+  visible page; the page snapshot used to get the unclipped rect, which
+  shifted magnetic drawing and redaction suggestions.
+- Two quick downloads in a row could collide on the shared offscreen
+  document. They now run one after another.
+
 ## [1.3.0] - 2026-11-24
 
 ### Added

@@ -611,7 +611,7 @@
     "message": "Polish & share"
   },
   "welcomeStep3Body": {
-    "message": "Annotate, redact, add a background or a device frame — then copy or download."
+    "message": "Annotate, magnify, redact, add a background or a device frame — then copy, download or export a short video."
   },
   "welcomePrivacyTitle": {
     "message": "Private by design"
@@ -733,7 +733,7 @@
     "message": "Couldn't create the animation."
   },
   "animateEmpty": {
-    "message": "Add arrows, boxes, labels or steps — they'll appear one by one."
+    "message": "Add arrows, boxes, labels, steps, lenses or spotlights — they'll appear one by one."
   },
   "animateMp4Unsupported": {
     "message": "This browser can't encode MP4 — use WebM or GIF."
@@ -745,5 +745,182 @@
         "content": "$1"
       }
     }
+  },
+  "toolMagnify": {
+    "message": "Magnifier"
+  },
+  "toolSpotlight": {
+    "message": "Spotlight"
+  },
+  "magnifyZoom": {
+    "message": "Magnification"
+  },
+  "shapeTitle": {
+    "message": "Shape"
+  },
+  "shapeCircle": {
+    "message": "Circle"
+  },
+  "shapeRounded": {
+    "message": "Rounded"
+  },
+  "shapeRect": {
+    "message": "Square"
+  },
+  "shapeEllipse": {
+    "message": "Ellipse"
+  },
+  "spotlightDim": {
+    "message": "Dim the rest"
+  },
+  "animateMode": {
+    "message": "Animation"
+  },
+  "animateModeNotes": {
+    "message": "Annotations"
+  },
+  "animateModeScroll": {
+    "message": "Page scroll"
+  },
+  "animateScrollHint": {
+    "message": "The page scrolls from top to bottom inside its frame, and your annotations appear as they come into view."
+  },
+  "animateCursor": {
+    "message": "Virtual pointer"
+  },
+  "animateCursorHint": {
+    "message": "A pointer moves to each annotation and clicks it into place."
+  },
+  "openSettings": {
+    "message": "Settings"
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "settingsSaved": {
+    "message": "Saved"
+  },
+  "settingsPrivacy": {
+    "message": "Settings and captures stay on this device."
+  },
+  "afterCaptureTitle": {
+    "message": "After a capture"
+  },
+  "afterCaptureHint": {
+    "message": "Applies to every capture mode — toolbar, shortcuts and the right-click menu. Every capture is also saved to the library."
+  },
+  "afterEditor": {
+    "message": "Open the editor"
+  },
+  "afterEditorDescription": {
+    "message": "Annotate, frame and export."
+  },
+  "afterCopy": {
+    "message": "Copy to clipboard"
+  },
+  "afterCopyDescription": {
+    "message": "Ready to paste right away. Edit it any time."
+  },
+  "afterDownload": {
+    "message": "Download"
+  },
+  "afterDownloadDescription": {
+    "message": "Saved straight to your Downloads folder."
+  },
+  "downloadPermissionDenied": {
+    "message": "Without the downloads permission SnapFrame can't save files directly."
+  },
+  "downloadPermissionMissing": {
+    "message": "Direct downloads need the downloads permission. Until it's granted, captures open in the editor."
+  },
+  "downloadPermissionGrant": {
+    "message": "Allow"
+  },
+  "fileNameTitle": {
+    "message": "File names"
+  },
+  "fileNameHint": {
+    "message": "Used for every download — images, animations and quick downloads."
+  },
+  "fileNameTokens": {
+    "message": "Placeholders"
+  },
+  "fileNameReset": {
+    "message": "Reset to default"
+  },
+  "fileNamePreview": {
+    "message": "Example:"
+  },
+  "tokenSite": {
+    "message": "site"
+  },
+  "tokenTitle": {
+    "message": "page title"
+  },
+  "tokenDate": {
+    "message": "date"
+  },
+  "tokenTime": {
+    "message": "time"
+  },
+  "historyTitle": {
+    "message": "Library"
+  },
+  "historyHint": {
+    "message": "Older captures (and their edits) are removed automatically. Everything stays in this browser."
+  },
+  "historyKeep": {
+    "message": "Keep the most recent"
+  },
+  "pageAwareTitle": {
+    "message": "Page awareness"
+  },
+  "pageAwareHint": {
+    "message": "At capture time, SnapFrame notes where page elements and personal data (emails, card numbers…) are — for magnetic drawing and one-click redaction. Only positions are kept, never the text."
+  },
+  "shortcutsSettingsHint": {
+    "message": "Change or add keyboard shortcuts in your browser's extension settings."
+  },
+  "quickCopied": {
+    "message": "Copied to clipboard"
+  },
+  "quickDownloaded": {
+    "message": "Saved to Downloads"
+  },
+  "quickEdit": {
+    "message": "Edit"
+  },
+  "noticeCopyFailed": {
+    "message": "Couldn't copy automatically — use Copy in the top right."
+  },
+  "noticeDownloadFailed": {
+    "message": "Couldn't download automatically — use Download in the top right."
+  },
+  "lineStyle": {
+    "message": "Line"
+  },
+  "lineSolid": {
+    "message": "Solid"
+  },
+  "lineDashed": {
+    "message": "Dashed"
+  },
+  "arrowHeads": {
+    "message": "Ends"
+  },
+  "arrowHeadEnd": {
+    "message": "Arrow at the end"
+  },
+  "arrowHeadBoth": {
+    "message": "Arrows at both ends"
+  },
+  "arrowHeadNone": {
+    "message": "No arrowheads (a line)"
+  },
+  "keySpace": {
+    "message": "Space"
+  },
+  "panShortcut": {
+    "message": "Hold and drag to move around"
   }
 }

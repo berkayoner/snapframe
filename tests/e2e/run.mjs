@@ -6,6 +6,7 @@
 // The e2e build adds <all_urls> host access and exposes small test hooks
 // (globalThis.__snapframeTest in the worker, window.__snapframeEditor in the
 // editor) - neither exists in production builds.
+/* global chrome -- used inside page/worker callbacks, which run in the extension */
 import { createServer } from 'node:http';
 import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -98,7 +99,12 @@ async function samplePixels(extensionPage, captureId, points) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(bitmap, 0, 0);
       const samples = points.map(([x, y]) => Array.from(ctx.getImageData(x, y, 1, 1).data));
-      return { width: bitmap.width, height: bitmap.height, samples, record: { ...record, blob: undefined } };
+      return {
+        width: bitmap.width,
+        height: bitmap.height,
+        samples,
+        record: { ...record, blob: undefined, thumbnail: !!record.thumbnail },
+      };
     },
     { captureId, points },
   );
@@ -116,6 +122,42 @@ async function waitForEditor(context, trigger) {
 
 function captureIdOf(editor) {
   return new URL(editor.url()).searchParams.get('captureId');
+}
+
+/** Decodes a PNG file in an extension page and samples pixels from it. */
+async function decodePixels(extensionPage, buffer, points) {
+  return extensionPage.evaluate(
+    async ({ base64, points }) => {
+      const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
+      const bitmap = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
+      const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(bitmap, 0, 0);
+      return {
+        width: bitmap.width,
+        height: bitmap.height,
+        samples: points.map(([x, y]) => Array.from(ctx.getImageData(x, y, 1, 1).data)),
+      };
+    },
+    { base64: buffer.toString('base64'), points },
+  );
+}
+
+/** Downloads the editor's current PNG export (Ctrl+S) and returns the file's bytes. */
+async function exportPng(editor, name) {
+  const downloadPromise = editor.waitForEvent('download');
+  await editor.keyboard.press('Control+s');
+  const file = path.join(artifacts, name);
+  await (await downloadPromise).saveAs(file);
+  return readFile(file);
+}
+
+async function canvasMapper(editor) {
+  // A fresh editor plays the canvas entrance animation (slide + scale); measure once it settles.
+  await editor.waitForFunction(() => document.getAnimations().every((animation) => animation.playState !== 'running'));
+  const shell = await editor.locator('.canvas-shell').boundingBox();
+  const zoom = await editor.evaluate(() => window.__snapframeEditor.getState().zoom);
+  return (x, y) => [shell.x + x * zoom, shell.y + y * zoom];
 }
 
 const server = createServer((request, response) => {
@@ -642,12 +684,352 @@ try {
     await reopened.close();
   });
 
+  await step('editor: the magnifier enlarges the screenshot and never reveals a redaction', async () => {
+    await page.bringToFront();
+    await page.goto(`${origin}/plain`);
+    const editor = await waitForEditor(context, () =>
+      worker.evaluate(() => globalThis.__snapframeTest.runVisibleCapture(1)),
+    );
+    const toScreen = await canvasMapper(editor);
+    await editor.keyboard.press('m');
+    await editor.mouse.click(...toScreen(310, 200));
+    const lens = await editor.evaluate(() => window.__snapframeEditor.getState().objects.at(-1));
+    assert.equal(lens.type, 'magnify');
+    assert.ok(Math.abs(lens.width - 140) < 1 && Math.abs(lens.x - 240) < 2, `lens ${lens.x},${lens.width}`);
+
+    // The black box ends at x=300. At 2x around x=310, canvas x=295 shows source x~302.5 - white
+    // (it would be black without the lens).
+    let pixels = await decodePixels(editor, await exportPng(editor, `magnify-${lang}.png`), [
+      [295, 200],
+      [250, 200],
+    ]);
+    assert.ok(near(pixels.samples[0], [255, 255, 255]), `enlarged edge ${pixels.samples[0]}`);
+    assert.ok(near(pixels.samples[1], [0, 0, 0]), `enlarged box ${pixels.samples[1]}`);
+
+    // A pixelated redaction over the box edge must show up pixelated inside the lens too.
+    await editor.evaluate(() =>
+      window.__snapframeEditor.getState().addObject({
+        id: 'redaction-under-lens',
+        type: 'blur',
+        x: 280,
+        y: 180,
+        width: 40,
+        height: 40,
+        style: { mode: 'pixelate', strength: 14 },
+      }),
+    );
+    pixels = await decodePixels(editor, await exportPng(editor, `magnify-redacted-${lang}.png`), [[295, 200]]);
+    const [redacted] = pixels.samples;
+    assert.ok(
+      !near(redacted, [255, 255, 255], 40) && !near(redacted, [0, 0, 0], 40),
+      `the lens must show the pixelated block, got ${redacted}`,
+    );
+    await editor.screenshot({ path: path.join(artifacts, `editor-magnify-${lang}.png`) });
+    await editor.close();
+  });
+
+  await step('editor: a spotlight dims the page around it and keeps annotations bright', async () => {
+    await page.bringToFront();
+    await page.goto(`${origin}/plain`);
+    const editor = await waitForEditor(context, () =>
+      worker.evaluate(() => globalThis.__snapframeTest.runVisibleCapture(1)),
+    );
+    const toScreen = await canvasMapper(editor);
+    await editor.keyboard.press('n');
+    await editor.mouse.click(...toScreen(1000, 650));
+    await editor.keyboard.press('f');
+    await editor.mouse.move(...toScreen(500, 350));
+    await editor.mouse.down();
+    await editor.mouse.move(...toScreen(650, 450), { steps: 4 });
+    await editor.mouse.move(...toScreen(800, 550), { steps: 4 });
+    await editor.mouse.up();
+    const { spot, badge } = await editor.evaluate(() => {
+      const { objects } = window.__snapframeEditor.getState();
+      return { spot: objects.find((o) => o.type === 'spotlight'), badge: objects.find((o) => o.type === 'step') };
+    });
+    assert.ok(spot && Math.abs(spot.width - 300) <= 2 && Math.abs(spot.height - 200) <= 2, 'spotlight drawn');
+
+    const pixels = await decodePixels(editor, await exportPng(editor, `spotlight-${lang}.png`), [
+      [650, 450], // inside the spotlight
+      [1100, 200], // outside
+      [Math.round(badge.x + badge.width * 0.18), Math.round(badge.y + badge.height / 2)], // the badge, outside
+    ]);
+    const [inside, outside, badgePixel] = pixels.samples;
+    assert.ok(near(inside, [255, 255, 255]), `inside ${inside}`);
+    assert.ok(
+      outside.slice(0, 3).every((value) => value < 150),
+      `outside should be dimmed, got ${outside}`,
+    );
+    assert.ok(near(badgePixel, [255, 59, 48], 24), `annotations stay bright, got ${badgePixel}`);
+    await editor.screenshot({ path: path.join(artifacts, `editor-spotlight-${lang}.png`) });
+    await editor.close();
+  });
+
+  await step('animate: a full-page capture scrolls by inside its frame', async () => {
+    await page.bringToFront();
+    await page.goto(`${origin}/long`);
+    const editor = await waitForEditor(context, () =>
+      worker.evaluate(() => globalThis.__snapframeTest.runFullPageCapture()),
+    );
+    await editor.getByRole('button', { name: /^(animate|canlandır)(\s|$)/i }).click();
+    await editor.waitForSelector('.animate__canvas');
+    const mode = editor.locator('.animate__controls .segmented').first();
+    assert.equal(
+      await mode.getByRole('button', { name: /page scroll|sayfa kaydırma/i }).getAttribute('aria-pressed'),
+      'true',
+      'full-page captures default to the scroll animation',
+    );
+    // The screen is the captured viewport (1280 x 800), not the whole 4600 px page.
+    const ratio = await editor.evaluate(() => {
+      const canvas = document.querySelector('.animate__canvas');
+      return canvas.width / canvas.height;
+    });
+    assert.ok(Math.abs(ratio - 1.6) < 0.02, `screen ratio ${ratio}`);
+    await editor.waitForTimeout(2500);
+    await editor.screenshot({ path: path.join(artifacts, `editor-animate-scroll-${lang}.png`) });
+
+    const formats = editor.locator('.animate__controls .segmented').nth(1);
+    await formats.getByRole('button', { name: 'WebM', exact: true }).click();
+    const downloadPromise = editor.waitForEvent('download', { timeout: 180_000 });
+    await editor.locator('.dialog__footer .btn--primary').click();
+    const file = path.join(artifacts, `animation-scroll-${lang}.webm`);
+    await (await downloadPromise).saveAs(file);
+    const duration = await editor.evaluate(
+      async (base64) => {
+        const video = document.createElement('video');
+        video.muted = true;
+        video.src = `data:video/webm;base64,${base64}`;
+        await new Promise((resolve, reject) => {
+          video.onloadedmetadata = resolve;
+          video.onerror = () => reject(new Error('video failed to load'));
+        });
+        if (!Number.isFinite(video.duration)) {
+          video.currentTime = 1e9;
+          await new Promise((resolve) => (video.ontimeupdate = resolve));
+        }
+        return video.duration;
+      },
+      (await readFile(file)).toString('base64'),
+    );
+    assert.ok(duration > 4, `scroll video duration ${duration}`);
+    console.log(`    scroll video: ${duration.toFixed(1)} s`);
+    await editor.close();
+  });
+
+  await step('editor: Space + drag (or the middle button) pans without drawing', async () => {
+    await page.bringToFront();
+    await page.goto(`${origin}/plain`);
+    const editor = await waitForEditor(context, () =>
+      worker.evaluate(() => globalThis.__snapframeTest.runVisibleCapture(1)),
+    );
+    await canvasMapper(editor); // wait for the entrance to settle
+    await editor.keyboard.press('Control+1'); // 100%: wider than the work area
+    await editor.waitForTimeout(400);
+    await editor.keyboard.press('r');
+    const scroller = editor.locator('.viewport__scroller');
+    const box = await scroller.boundingBox();
+    const scrollOf = () =>
+      editor.evaluate(() => {
+        const element = document.querySelector('.viewport__scroller');
+        return { left: element.scrollLeft, top: element.scrollTop };
+      });
+    const count = () => editor.evaluate(() => window.__snapframeEditor.getState().objects.length);
+    const objectsBefore = await count();
+    await editor.evaluate(() => {
+      const element = document.querySelector('.viewport__scroller');
+      element.scrollLeft = 0;
+      element.scrollTop = 0;
+    });
+
+    await editor.keyboard.down('Space');
+    assert.ok(await editor.locator('.viewport__scroller--ready').count(), 'grab cursor while Space is held');
+    await editor.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await editor.mouse.down();
+    await editor.mouse.move(box.x + box.width / 2 - 150, box.y + box.height / 2 - 80, { steps: 6 });
+    await editor.mouse.up();
+    await editor.keyboard.up('Space');
+    const afterSpace = await scrollOf();
+    assert.ok(Math.abs(afterSpace.left - 150) <= 3, `panned horizontally to ${afterSpace.left}`);
+    assert.equal(await count(), objectsBefore, 'panning must not draw');
+
+    await editor.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await editor.mouse.down({ button: 'middle' });
+    await editor.mouse.move(box.x + box.width / 2 + 100, box.y + box.height / 2, { steps: 4 });
+    await editor.mouse.up({ button: 'middle' });
+    assert.ok(Math.abs((await scrollOf()).left - 50) <= 3, 'middle-button drag pans too');
+    assert.equal(await count(), objectsBefore);
+    await editor.close();
+  });
+
+  await step('editor: arrows can be lines or double-headed, and any outline can be dashed', async () => {
+    await page.bringToFront();
+    await page.goto(`${origin}/plain`);
+    const editor = await waitForEditor(context, () =>
+      worker.evaluate(() => globalThis.__snapframeTest.runVisibleCapture(1)),
+    );
+    const toScreen = await canvasMapper(editor);
+    await editor.keyboard.press('a');
+    await editor.mouse.move(...toScreen(400, 600));
+    await editor.mouse.down();
+    await editor.mouse.move(...toScreen(700, 600), { steps: 4 });
+    await editor.mouse.move(...toScreen(1000, 600), { steps: 4 });
+    await editor.mouse.up();
+    await editor.keyboard.press('v');
+    await editor
+      .locator('.inspector button[title]')
+      .filter({ has: editor.locator('.line-sample--dashed') })
+      .click();
+    await editor.getByTitle(/no arrowheads|ok başı yok/i).click();
+    const arrow = await editor.evaluate(() => window.__snapframeEditor.getState().objects.at(-1));
+    assert.equal(arrow.type, 'arrow');
+    assert.deepEqual([arrow.style.heads, arrow.style.dashed], ['none', true]);
+
+    // Along the dashed line there are both stroke pixels and gaps.
+    const y = Math.round(arrow.y);
+    const points = Array.from({ length: 120 }, (_, index) => [500 + index * 2, y]);
+    const pixels = await decodePixels(editor, await exportPng(editor, `dashed-${lang}.png`), points);
+    const red = pixels.samples.filter((sample) => near(sample, [255, 59, 48], 40)).length;
+    const white = pixels.samples.filter((sample) => near(sample, [255, 255, 255], 20)).length;
+    assert.ok(red > 20 && white > 20, `dashed line: ${red} stroke, ${white} gap samples`);
+    await editor.screenshot({ path: path.join(artifacts, `editor-line-styles-${lang}.png`) });
+    await editor.close();
+  });
+
+  let options;
+
+  await step('settings page renders and saves', async () => {
+    options = await context.newPage();
+    await options.goto(`chrome-extension://${extensionId}/options.html`);
+    await options.waitForSelector('.choice');
+    assert.equal(await options.locator('.choice').count(), 3);
+    assert.equal(await options.locator('.choice').first().getAttribute('aria-checked'), 'true');
+    await options.waitForTimeout(700); // sections rise in one after another
+    await options.screenshot({ path: path.join(artifacts, `settings-${lang}.png`), fullPage: true });
+  });
+
+  await step('settings: quick copy skips the editor and puts the capture on the clipboard', async () => {
+    await options.bringToFront();
+    await options.locator('.choice').nth(1).click();
+    await options.waitForFunction(
+      () => document.querySelectorAll('.choice')[1].getAttribute('aria-checked') === 'true',
+    );
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin });
+    let editorOpened = false;
+    const onPage = (candidate) => {
+      if (candidate.url().includes('editor.html')) editorOpened = true;
+    };
+    context.on('page', onPage);
+    try {
+      await page.bringToFront();
+      await page.goto(`${origin}/plain`);
+      await worker.evaluate(() => globalThis.__snapframeTest.runVisibleCapture(1));
+      await page.waitForFunction(() => !!document.getElementById('snapframe-capture-toast'), null, { timeout: 15_000 });
+      await page.waitForTimeout(450); // the card slides in
+      await page.screenshot({ path: path.join(artifacts, `quick-copy-${lang}.png`) });
+      const size = await page.evaluate(async () => {
+        const [item] = await navigator.clipboard.read();
+        const bitmap = await createImageBitmap(await item.getType('image/png'));
+        return [bitmap.width, bitmap.height];
+      });
+      assert.deepEqual(size, [1280, 800], 'the capture is on the clipboard');
+      await page.waitForTimeout(800);
+      assert.equal(editorOpened, false, 'no editor tab for a quick copy');
+    } finally {
+      context.off('page', onPage);
+    }
+
+    // The card's "Edit" button asks the background to open the capture in the editor.
+    const captureId = await options.evaluate(async () => {
+      const db = await new Promise((resolve) => {
+        const request = indexedDB.open('snapframe');
+        request.onsuccess = () => resolve(request.result);
+      });
+      return new Promise((resolve) => {
+        const request = db.transaction('captures').objectStore('captures').index('createdAt').openCursor(null, 'prev');
+        request.onsuccess = () => resolve(request.result.value.captureId);
+      });
+    });
+    const editor = await waitForEditor(context, () =>
+      options.evaluate((id) => chrome.runtime.sendMessage({ type: 'open-editor', captureId: id }), captureId),
+    );
+    assert.equal(captureIdOf(editor), captureId);
+    await editor.close();
+  });
+
+  await step('settings: quick download uses the file name template and an offscreen document', async () => {
+    await options.bringToFront();
+    await options.locator('.choice').nth(2).click();
+    await options.waitForFunction(
+      () => document.querySelectorAll('.choice')[2].getAttribute('aria-checked') === 'true',
+    );
+    await options.locator('.template__input').fill('{site}-{date}');
+    await options.waitForTimeout(700); // the template saves after a short pause
+    await worker.evaluate(() => {
+      globalThis.__suggestedNames = [];
+      chrome.downloads.onDeterminingFilename.addListener((item, suggest) => {
+        globalThis.__suggestedNames.push(item.filename);
+        suggest();
+      });
+    });
+
+    await page.bringToFront();
+    await page.goto(`${origin}/plain`);
+    await worker.evaluate(() => globalThis.__snapframeTest.runVisibleCapture(1));
+    await page.waitForFunction(() => !!document.getElementById('snapframe-capture-toast'), null, { timeout: 20_000 });
+    const result = await worker.evaluate(async () => {
+      const [latest] = await chrome.downloads.search({ orderBy: ['-startTime'], limit: 1 });
+      const offscreen = await chrome.runtime.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
+      return {
+        state: latest?.state,
+        mime: latest?.mime,
+        bytes: latest?.fileSize,
+        names: globalThis.__suggestedNames,
+        file: latest?.filename,
+        offscreen: offscreen.length,
+      };
+    });
+    assert.equal(result.state, 'complete');
+    assert.ok(result.bytes > 1000, `downloaded ${result.bytes} bytes`);
+    assert.equal(result.offscreen, 0, 'the offscreen document is closed afterwards');
+    if (result.names.length > 0) {
+      assert.match(result.names.at(-1), /^127-0-0-1-\d{4}-\d{2}-\d{2}\.png$/);
+    } else {
+      console.log(`    (suggested name not observable here; saved as ${result.file})`);
+    }
+
+    // Back to the defaults for the remaining steps.
+    await options.bringToFront();
+    await options.getByRole('button', { name: /reset to default|varsayılana dön/i }).click();
+    await options.locator('.choice').first().click();
+    await options.waitForTimeout(700);
+  });
+
+  await step('settings: page awareness can be turned off', async () => {
+    await options.bringToFront();
+    await options.locator('input[role=switch]').uncheck();
+    await options.waitForTimeout(200);
+    await page.bringToFront();
+    await page.goto(`${origin}/sensitive`);
+    const editor = await waitForEditor(context, () =>
+      worker.evaluate(() => globalThis.__snapframeTest.runVisibleCapture(1)),
+    );
+    const pixels = await samplePixels(editor, captureIdOf(editor), [[0, 0]]);
+    assert.equal(pixels.record.snapshot, undefined, 'nothing is read from the page');
+    assert.equal(await editor.evaluate(() => window.__snapframeEditor.getState().pageData), null);
+    await editor.close();
+    await options.bringToFront();
+    await options.locator('input[role=switch]').check();
+    await options.waitForTimeout(200);
+    await options.close();
+  });
+
   await step('popup renders actions, shortcuts and recent captures', async () => {
     const popup = await context.newPage();
     await popup.setViewportSize({ width: 340, height: 520 });
     await popup.goto(`chrome-extension://${extensionId}/popup.html`);
     await popup.waitForSelector('.popup__recent-thumb');
     assert.equal(await popup.locator('.capture-action').count(), 4);
+    assert.equal(await popup.getByRole('button', { name: /^(settings|ayarlar)$/i }).count(), 1);
     await popup.screenshot({ path: path.join(artifacts, `popup-${lang}.png`), fullPage: true });
     await popup.close();
   });
@@ -657,6 +1039,20 @@ try {
     await library.goto(`chrome-extension://${extensionId}/library.html`);
     await library.waitForSelector('.capture-card');
     assert.ok((await library.locator('.capture-card').count()) >= 3);
+    // Edited captures show their edited picture; every capture gets a small thumbnail.
+    await library.waitForSelector('.capture-card img[data-edited="true"]');
+    await library.waitForFunction(async () => {
+      const db = await new Promise((resolve) => {
+        const request = indexedDB.open('snapframe');
+        request.onsuccess = () => resolve(request.result);
+      });
+      const records = await new Promise((resolve) => {
+        const request = db.transaction('captures').objectStore('captures').getAll();
+        request.onsuccess = () => resolve(request.result);
+      });
+      return records.every((record) => record.thumbnail instanceof Blob);
+    });
+    await library.waitForTimeout(500); // cards rise in one after another
     await library.screenshot({ path: path.join(artifacts, `library-${lang}.png`) });
 
     const png = Buffer.from(

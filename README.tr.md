@@ -42,12 +42,21 @@ yoktur: çekimler tarayıcının IndexedDB'sinde kalır ve cihazdan hiç çıkma
   görünür. Kaydırma çubuğu görüntüye girmez, sayfa eski konumuna döner.
 - Popup, klavye kısayolları ve sağ tık menüsüyle çalışır. Çekim anında
   deklanşör efekti oynar.
+- **Hızlı eylemler:** Çekim, editör açılmadan doğrudan panoya ya da
+  İndirilenler klasörüne gidebilir (Ayarlar'dan seçilir). Sayfada çıkan küçük
+  bir kart bunu onaylar ve **Düzenle** düğmesi sunar.
 
 **Düzenleme**
 
 - Seç, kırp (serbest ya da 1:1, 4:3, 16:9, 4:5, 9:16), dikdörtgen, elips, ok,
-  metin etiketi, numaralı adım, vurgulayıcı, bulanıklaştırma ve
+  metin etiketi, numaralı adım, büyüteç, odak, vurgulayıcı, bulanıklaştırma ve
   pikselleştirme.
+- **Büyüteç:** Altındaki görüntüyü 1,5–4 kat büyüten daire ya da yuvarlatılmış
+  kare bir lup. 2× dışa aktarmada da keskin kalır. Gizlenen alanlar büyütülse
+  de gizli kalır.
+- **Odak:** Bir dikdörtgen, yuvarlatılmış dikdörtgen ya da elipsin dışındaki
+  her yeri karartır. Birden fazla odak tek karartmada birleşir; notlar parlak
+  kalır. Tek tık, imlecin altındaki öğeye odaklanır.
 - **Sayfayı tanır:**
   - Şekiller sayfadaki gerçek öğelerin kenarlarına yapışır.
   - Tek tık, imlecin altındaki öğeyi çerçeveler.
@@ -56,8 +65,10 @@ yoktur: çekimler tarayıcının IndexedDB'sinde kalır ve cihazdan hiç çıkma
   (mod-97), TC kimlik no (sağlama) ve API anahtarları bulunur; "Tümünü gizle"
   hepsini tek adımda pikselleştirir. Tarih, fiyat ve sipariş numaraları
   bilerek yok sayılır.
-- Çoklu seçim, katman sırası, geri al/yinele, yakınlaştırma ve her araç için
-  kısayol (düzenleyicide `?`). Değişiklikler kendiliğinden kaydedilir.
+- Kesikli çizgiler; oklarda tek uç, iki uç ya da uçsuz (düz çizgi) seçeneği.
+- Çoklu seçim, katman sırası, geri al/yinele, yakınlaştırma, boşluk tuşu ya da
+  orta tuşla sürükleyerek gezinme ve her araç için kısayol (düzenleyicide
+  `?`). Değişiklikler kendiliğinden kaydedilir.
 
 **Dışa aktarma**
 
@@ -67,12 +78,27 @@ yoktur: çekimler tarayıcının IndexedDB'sinde kalır ve cihazdan hiç çıkma
 - 1× veya 2× PNG/JPG, panoya kopyalama ve birebir ön izleme.
 - **Animasyonlu dışa aktarma (MP4, WebM, GIF):**
   - Notlar sırayla belirir; isteğe bağlı kamera her nota yakınlaşır.
-  - Video cihazda, WebCodecs ile üretilir.
+  - İsteğe bağlı **sanal imleç** her nota gidip tıklayarak yerleştirir; okları
+    ve vurguları çizgisi boyunca sürükler.
+  - Tam sayfa çekimlerde **sayfa kaydırma**: sayfa, çerçevesinin (tarayıcı,
+    dizüstü, telefon…) içinde yukarıdan aşağı kayar; notlar göründükçe belirir.
+  - Video cihazda, WebCodecs ile üretilir. Son kullanılan ayarlar hatırlanır.
 
 **Kütüphane**
 
-- Son 30 çekim: arama, indirme ve silme. Herhangi bir görüntüyü dosya
-  seçerek, sürükleyip bırakarak ya da Ctrl+V ile içe aktarabilirsiniz.
+- Son 30 çekim (Ayarlar'dan 60 ya da 120): arama, indirme ve silme. Kartlar,
+  küçük resimlerden çekimin düzenlenmiş hâlini gösterir. Herhangi
+  bir görüntüyü dosya seçerek, sürükleyip bırakarak ya da Ctrl+V ile içe
+  aktarabilirsiniz.
+
+**Ayarlar**
+
+- Çekimden sonra ne olacağı: editörde aç, panoya kopyala ya da indir.
+- Tüm indirmeler için dosya adı şablonu (`{site}`, `{title}`, `{date}`,
+  `{time}`), canlı örnekle.
+- Kütüphane boyutu ve sayfa farkındalığı anahtarı (mıknatıslı çizim ile tek
+  tıkla gizleme, çekim anında öğe konumlarını okur).
+- Popup'tan ya da araç çubuğu simgesine sağ tıklayarak açılır.
 
 **Kalite**
 
@@ -81,8 +107,9 @@ yoktur: çekimler tarayıcının IndexedDB'sinde kalır ve cihazdan hiç çıkma
 - Açık ve koyu tema, klavye erişilebilirliği ve hareket azaltma tercihine
   uyum.
 - Tarayıcı diline göre Türkçe veya İngilizce arayüz.
-- En az yetki: yalnızca `activeTab`, `scripting` ve `contextMenus`. Ana
-  makine (host) izni yoktur.
+- En az yetki: `activeTab`, `scripting`, `contextMenus` ve `offscreen`.
+  `downloads` isteğe bağlıdır; yalnızca doğrudan indirmeyi açarsanız istenir,
+  kapatınca geri bırakılır. Ana makine (host) izni yoktur.
 
 ## Klavye kısayolları
 

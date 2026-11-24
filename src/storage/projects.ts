@@ -10,8 +10,16 @@ export interface ProjectState {
   mockupId: string | null;
 }
 
-export async function saveProject(captureId: string, state: ProjectState): Promise<void> {
-  await db.projects.put({ captureId, updatedAt: Date.now(), ...state });
+/** Saves the edits, with a fresh preview when one is given (otherwise the last preview is kept). */
+export async function saveProject(captureId: string, state: ProjectState, thumbnail?: Blob): Promise<void> {
+  await db.transaction('rw', db.projects, async () => {
+    const preview = thumbnail ?? (await db.projects.get(captureId))?.thumbnail;
+    await db.projects.put({ captureId, updatedAt: Date.now(), ...state, thumbnail: preview });
+  });
+}
+
+export async function saveProjectThumbnail(captureId: string, thumbnail: Blob): Promise<void> {
+  await db.projects.update(captureId, { thumbnail });
 }
 
 export async function loadProject(captureId: string): Promise<ProjectState | undefined> {

@@ -1,5 +1,5 @@
 // Generates the Chrome Web Store listing images (en + tr) from the real extension:
-//   store/<lang>/screenshot-{1..4}.png   1280x800
+//   store/<lang>/screenshot-{1..5}.png   1280x800
 //   store/<lang>/promo-small.png         440x280
 //   store/<lang>/promo-marquee.png       1400x560
 //   .github/social-preview.png           1280x640 (GitHub repository social preview)
@@ -30,6 +30,10 @@ const COPY = {
       ['Present it on any device', 'Browser, laptop, phone and tablet frames that fit your screenshot.'],
       ['Every capture, one click away', 'A private library of your recent screenshots — search, re-edit, export.'],
       ['Select exactly what you need', 'Visible area, a precise region or the full page — with one shortcut.'],
+      [
+        'Point at what matters',
+        'Magnify the details, spotlight the rest — then export a video where a pointer clicks it all into place.',
+      ],
     ],
     tagline: 'Screenshots that look finished.',
     label: 'Record week!',
@@ -47,6 +51,10 @@ const COPY = {
         'Son ekran görüntülerinizden oluşan özel kütüphane — arayın, düzenleyin, dışa aktarın.',
       ],
       ['Tam ihtiyacınız olanı seçin', 'Görünen alan, belirli bir bölge ya da tam sayfa — tek kısayolla.'],
+      [
+        'Önemli olanı gösterin',
+        'Ayrıntıyı büyütün, gerisini karartın; sonra bir imlecin her şeyi yerleştirdiği bir video dışa aktarın.',
+      ],
     ],
     tagline: 'Bitmiş görünen ekran görüntüleri.',
     label: 'Rekor hafta!',
@@ -205,6 +213,52 @@ async function captureRawShots(lang, origin) {
     await editor.waitForTimeout(500);
     shots.mockup = await editor.screenshot();
 
+    // Spotlight on the chart and a magnifier on the revenue figure (shot 5).
+    await editor.evaluate(
+      ({ boxes }) => {
+        const store = window.__snapframeEditor.getState();
+        const u = store.unit;
+        store.setMockupId(null);
+        // Keep the email redactions; replace the other annotations.
+        for (const object of store.objects) {
+          if (object.type !== 'image' && object.type !== 'blur') store.removeObject(object.id);
+        }
+        const pad = 12;
+        store.addObject({
+          id: crypto.randomUUID(),
+          type: 'spotlight',
+          x: (boxes.chart.x - pad) * u,
+          y: (boxes.chart.y - pad) * u,
+          width: (boxes.chart.width + pad * 2) * u,
+          height: (boxes.chart.height + pad * 2) * u,
+          style: { dim: 0.6, shape: 'rounded', radius: 16 * u },
+        });
+        const size = 190;
+        const cx = boxes.kpi.x + boxes.kpi.width * 0.3;
+        const cy = boxes.kpi.y + boxes.kpi.height * 0.58;
+        store.addObject({
+          id: crypto.randomUUID(),
+          type: 'magnify',
+          x: (cx - size / 2) * u,
+          y: (cy - size / 2) * u,
+          width: size * u,
+          height: size * u,
+          style: { zoom: 2, shape: 'circle', color: '#ffffff', ringWidth: 4 * u },
+        });
+        store.clearSelection();
+        store.setBeautify({
+          background: { type: 'gradient', from: '#ff9a9e', to: '#fecfef', angle: 135 },
+          padding: 40,
+          radius: 12,
+          shadow: 'strong',
+        });
+      },
+      { boxes },
+    );
+    await editor.mouse.move(5, 300);
+    await editor.waitForTimeout(600);
+    shots.focus = await editor.screenshot();
+
     // Library (shot 3) and popup (overlaid on shot 3).
     const library = await context.newPage();
     await library.goto(`chrome-extension://${extensionId}/library.html`);
@@ -267,6 +321,7 @@ box-shadow:0 30px 80px rgba(20,8,80,.55),0 0 0 1px rgba(255,255,255,.14)}
     { shot: shots.mockup },
     { shot: shots.library, float: shots.popup },
     { shot: shots.select },
+    { shot: shots.focus },
   ];
   for (const [index, variant] of variants.entries()) {
     const [headline, sub] = copy.shots[index];

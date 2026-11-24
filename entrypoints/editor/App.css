@@ -353,6 +353,12 @@ body {
   gap: 14px;
 }
 
+.animate__hint {
+  color: var(--sf-fg-subtle);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
 .animate__progress {
   position: relative;
   width: 180px;

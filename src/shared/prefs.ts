@@ -4,6 +4,16 @@ import { ANNOTATION_COLORS, STROKE_WIDTHS } from '@/src/annotations/color';
 export type ExportFormat = 'png' | 'jpg';
 export type ExportScale = 1 | 2;
 
+/** Last-used animated export settings. */
+export interface AnimationPrefs {
+  format: 'mp4' | 'webm' | 'gif';
+  speed: 'slow' | 'normal' | 'fast';
+  /** Camera follows annotations. */
+  focus: boolean;
+  /** Virtual pointer clicks annotations into place. */
+  cursor: boolean;
+}
+
 /**
  * Per-user preferences remembered between captures (last used colors,
  * frame, export settings). Every extension page shares one origin, so
@@ -20,6 +30,7 @@ export interface Prefs {
   jpgQuality: number;
   /** Magnetic drawing (snap shapes to page elements). */
   snapEnabled: boolean;
+  animation: AnimationPrefs;
 }
 
 export const DEFAULT_PREFS: Prefs = {
@@ -30,7 +41,20 @@ export const DEFAULT_PREFS: Prefs = {
   exportScale: 1,
   jpgQuality: 90,
   snapEnabled: true,
+  animation: { format: 'mp4', speed: 'normal', focus: true, cursor: true },
 };
+
+function sanitizeAnimation(raw: unknown): AnimationPrefs {
+  const fallback = DEFAULT_PREFS.animation;
+  if (typeof raw !== 'object' || raw === null) return fallback;
+  const value = raw as Partial<AnimationPrefs>;
+  return {
+    format: value.format === 'webm' || value.format === 'gif' ? value.format : 'mp4',
+    speed: value.speed === 'slow' || value.speed === 'fast' ? value.speed : 'normal',
+    focus: typeof value.focus === 'boolean' ? value.focus : fallback.focus,
+    cursor: typeof value.cursor === 'boolean' ? value.cursor : fallback.cursor,
+  };
+}
 
 const STORAGE_KEY = 'snapframe-prefs';
 
@@ -54,6 +78,7 @@ function sanitize(raw: unknown): Prefs {
         ? value.jpgQuality
         : DEFAULT_PREFS.jpgQuality,
     snapEnabled: typeof value.snapEnabled === 'boolean' ? value.snapEnabled : DEFAULT_PREFS.snapEnabled,
+    animation: sanitizeAnimation(value.animation),
   };
 }
 

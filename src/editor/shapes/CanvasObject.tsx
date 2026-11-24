@@ -6,6 +6,8 @@ import { ArrowShape } from '@/src/editor/shapes/ArrowShape';
 import { TextShape } from '@/src/editor/shapes/TextShape';
 import { StepShape } from '@/src/editor/shapes/StepShape';
 import { BlurShape } from '@/src/editor/shapes/BlurShape';
+import { MagnifyShape } from '@/src/editor/shapes/MagnifyShape';
+import { SpotlightShape } from '@/src/editor/shapes/SpotlightShape';
 import type { CommonShapeProps } from '@/src/editor/shapes/types';
 import type { EditorObject } from '@/src/shared/types';
 
@@ -33,6 +35,8 @@ interface CanvasObjectProps {
   /** An in-progress drawing: rendered as a non-interactive preview, never exported. */
   draft?: boolean;
   handlers?: CanvasObjectHandlers;
+  /** The canvas's redactions (magnifiers re-apply them to what they enlarge). */
+  redactions?: EditorObject[];
 }
 
 const ACCENT = '#7a5bff';
@@ -52,6 +56,7 @@ export function CanvasObject({
   hidden,
   draft,
   handlers,
+  redactions = [],
 }: CanvasObjectProps) {
   const id = object.id;
   const common: CommonShapeProps = {
@@ -112,6 +117,18 @@ export function CanvasObject({
       ) : (
         <BlurShape object={object} sourceImage={image} imageOffset={imageOffset} {...common} />
       );
+    case 'magnify':
+      return (
+        <MagnifyShape
+          object={object}
+          sourceImage={image}
+          imageOffset={imageOffset}
+          redactions={redactions}
+          {...common}
+        />
+      );
+    case 'spotlight':
+      return <SpotlightShape object={object} draft={draft} {...common} />;
     default:
       return null;
   }

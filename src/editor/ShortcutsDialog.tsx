@@ -14,6 +14,7 @@ const GENERAL: Array<{ keys: string[]; label: MessageKey }> = [
   { keys: ['←↑→↓'], label: 'nudge' },
   { keys: ['[', ']'], label: 'arrangeShortcut' },
   { keys: ['Shift'], label: 'constrainShortcut' },
+  { keys: [t('keySpace')], label: 'panShortcut' },
   { keys: [MOD_KEY, '+ / −'], label: 'zoomInOut' },
   { keys: [MOD_KEY, '0'], label: 'zoomFit' },
   { keys: [MOD_KEY, '1'], label: 'zoomActualSize' },

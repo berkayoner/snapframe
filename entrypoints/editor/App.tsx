@@ -20,14 +20,22 @@ import { loadPrefs } from '@/src/shared/prefs';
 import { NO_BACKGROUND } from '@/src/editor/beautify/presets';
 import { toPageData } from '@/src/editor/smart/pageData';
 import { useSmartUi } from '@/src/editor/smart/smartUi';
-import { Toaster } from '@/src/shared/toast';
-import { t } from '@/src/shared/i18n';
+import { Toaster, toast } from '@/src/shared/toast';
+import { t, type MessageKey } from '@/src/shared/i18n';
 import './App.css';
 
 type LoadState = 'loading' | 'not-found' | 'error' | 'ready';
 
 function getCaptureIdFromLocation(): string | null {
   return new URLSearchParams(window.location.search).get('captureId');
+}
+
+/** Set by the background when a quick action (copy / download) failed and the editor opened instead. */
+function noticeFromLocation(): MessageKey | null {
+  const notice = new URLSearchParams(window.location.search).get('notice');
+  if (notice === 'copy-failed') return 'noticeCopyFailed';
+  if (notice === 'download-failed') return 'noticeDownloadFailed';
+  return null;
 }
 
 function StateScreen({
@@ -63,7 +71,7 @@ function App() {
   const image = useHtmlImage(record?.blob);
   const canvasWidth = useEditorStore((s) => s.canvasWidth);
 
-  useAutosave(record?.captureId ?? null, sceneReady);
+  useAutosave(record?.captureId ?? null, sceneReady, stageRef);
   useEditorShortcuts({
     onDownload: () => record && void downloadImage(stageRef.current, record),
     onCopyImage: () => void copyImage(stageRef.current),
@@ -107,6 +115,8 @@ function App() {
       setRecord(found);
       setState('ready');
       setSceneReady(true);
+      const notice = noticeFromLocation();
+      if (notice) toast.info(t(notice));
     }
 
     load(captureId).catch((error: unknown) => {

@@ -52,7 +52,11 @@ export type ProgressCallback = (done: number, total: number) => void;
  * (not the requested one), so pages that end early or clamp scrolling
  * still stitch without gaps. The page is always restored, even on failure.
  */
-export async function captureFullPage(tab: CapturableTab, onProgress?: ProgressCallback): Promise<CapturePayload> {
+export async function captureFullPage(
+  tab: CapturableTab,
+  onProgress?: ProgressCallback,
+  options: { pageAware?: boolean } = {},
+): Promise<CapturePayload> {
   const page = await runInPage(tab.id, preparePage, [PIN_ATTR, ORIGINAL_VISIBILITY_ATTR, CAPTURE_STYLE_ID]);
 
   try {
@@ -63,11 +67,14 @@ export async function captureFullPage(tab: CapturableTab, onProgress?: ProgressC
     const steps = buildScrollSteps(totalHeight, innerHeight);
     // Page-aware data in document coordinates, taken at the top before slicing. Bars that only
     // appear in the last slice (cookie banners, chat bubbles) sit elsewhere in the stitch: skip them.
-    const snapshot = await takeSnapshot(
-      tab.id,
-      { x: 0, y: 0, width: innerWidth, height: totalHeight },
-      { documentCoords: true, skipSelector: `[${PIN_ATTR}="bottom"]` },
-    );
+    const snapshot =
+      options.pageAware === false
+        ? undefined
+        : await takeSnapshot(
+            tab.id,
+            { x: 0, y: 0, width: innerWidth, height: totalHeight },
+            { documentCoords: true, skipSelector: `[${PIN_ATTR}="bottom"]` },
+          );
 
     let canvas: OffscreenCanvas | null = null;
     let ctx: OffscreenCanvasRenderingContext2D | null = null;
@@ -112,7 +119,7 @@ export async function captureFullPage(tab: CapturableTab, onProgress?: ProgressC
       blob,
       { width: canvas.width, height: canvas.height, devicePixelRatio: scale },
       { url: tab.url, title: tab.title, type: 'full-page' },
-      { warnings, snapshot },
+      { warnings, snapshot, viewport: { width: innerWidth, height: innerHeight } },
     );
   } finally {
     await runInPage(tab.id, restorePage, [

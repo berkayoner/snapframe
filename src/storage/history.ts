@@ -1,16 +1,20 @@
 import { db, type CaptureRecord } from '@/src/storage/db';
+import { loadSettings } from '@/src/shared/settings';
+import { thumbnailFromBlob } from '@/src/storage/thumbnails';
 
-/** Keep the most recent captures, evict the rest (with their autosaved edits). */
-export const MAX_HISTORY_ITEMS = 30;
-
-/** Call after every new capture is persisted - evicts the oldest rows past the cap. */
-export async function pruneHistory(): Promise<void> {
+/**
+ * Call after every new capture is persisted: keeps the most recent captures
+ * (the library size from the settings, unless `limit` is given) and evicts
+ * the rest, with their autosaved edits.
+ */
+export async function pruneHistory(limit?: number): Promise<void> {
+  const max = limit ?? (await loadSettings()).historyLimit;
   await db.transaction('rw', db.captures, db.projects, async () => {
     const count = await db.captures.count();
-    if (count <= MAX_HISTORY_ITEMS) return;
+    if (count <= max) return;
     const oldestIds = await db.captures
       .orderBy('createdAt')
-      .limit(count - MAX_HISTORY_ITEMS)
+      .limit(count - max)
       .primaryKeys();
     await db.captures.bulkDelete(oldestIds);
     await db.projects.bulkDelete(oldestIds);
@@ -19,6 +23,30 @@ export async function pruneHistory(): Promise<void> {
 
 export function listRecentCaptures(limit = 8): Promise<CaptureRecord[]> {
   return db.captures.orderBy('createdAt').reverse().limit(limit).toArray();
+}
+
+export interface CapturePreview {
+  record: CaptureRecord;
+  /** What to show on a card: the edited picture's thumbnail, else the capture's, else the capture itself. */
+  image: Blob;
+  edited: boolean;
+}
+
+export async function withPreviews(records: CaptureRecord[]): Promise<CapturePreview[]> {
+  const projects = await db.projects.bulkGet(records.map((record) => record.captureId));
+  return records.map((record, index) => {
+    const edited = projects[index]?.thumbnail;
+    return { record, image: edited ?? record.thumbnail ?? record.blob, edited: !!edited };
+  });
+}
+
+/** Captures saved before thumbnails existed get one, one at a time, in the background. */
+export async function backfillThumbnails(records: CaptureRecord[]): Promise<void> {
+  for (const record of records) {
+    if (record.thumbnail) continue;
+    const thumbnail = await thumbnailFromBlob(record.blob);
+    if (thumbnail) await db.captures.update(record.captureId, { thumbnail }).catch(() => undefined);
+  }
 }
 
 export function listAllCaptures(): Promise<CaptureRecord[]> {

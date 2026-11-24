@@ -25,7 +25,11 @@ export type RuntimeMessage =
   /** Popup -> background: scroll-and-stitch the active tab. */
   | { type: 'start-full-page-capture' }
   /** Background -> any open extension page: full-page progress. */
-  | { type: 'capture-progress'; done: number; total: number };
+  | { type: 'capture-progress'; done: number; total: number }
+  /** In-page quick-action card -> background: open this capture in the editor, next to the tab. */
+  | { type: 'open-editor'; captureId: string }
+  /** Background -> offscreen document: make a blob URL for a stored capture (answers `{ url }`). */
+  | { type: 'offscreen-blob-url'; captureId: string };
 
 export type RuntimeMessageType = RuntimeMessage['type'];
 export type MessageOf<T extends RuntimeMessageType> = Extract<RuntimeMessage, { type: T }>;

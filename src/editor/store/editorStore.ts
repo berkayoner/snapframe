@@ -12,7 +12,18 @@ interface HistorySnapshot {
   canvasHeight: number;
 }
 
-export type EditorTool = 'select' | 'crop' | 'rectangle' | 'ellipse' | 'arrow' | 'text' | 'step' | 'highlight' | 'blur';
+export type EditorTool =
+  | 'select'
+  | 'crop'
+  | 'rectangle'
+  | 'ellipse'
+  | 'arrow'
+  | 'text'
+  | 'step'
+  | 'magnify'
+  | 'spotlight'
+  | 'highlight'
+  | 'blur';
 
 export type ZoomMode = 'fit' | 'manual';
 

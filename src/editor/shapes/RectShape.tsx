@@ -1,5 +1,5 @@
 import { Rect } from 'react-konva';
-import { readShapeStyle, resolveShapeFill } from '@/src/annotations/shapes/shapeStyle';
+import { dashPattern, readShapeStyle, resolveShapeFill } from '@/src/annotations/shapes/shapeStyle';
 import { resolveHighlightFill } from '@/src/annotations/highlight/highlightStyle';
 import type { CommonShapeProps } from '@/src/editor/shapes/types';
 import type { EditorObject } from '@/src/shared/types';
@@ -22,6 +22,8 @@ export function RectShape({ object, ...common }: RectShapeProps) {
       stroke={style.stroke}
       strokeWidth={style.strokeWidth}
       cornerRadius={style.cornerRadius}
+      dash={dashPattern(style.strokeWidth)}
+      dashEnabled={style.dashed}
       lineJoin="round"
       // Thin outlines are hard to grab; widen the invisible hit area instead of the stroke.
       hitStrokeWidth={Math.max(style.strokeWidth, 12)}

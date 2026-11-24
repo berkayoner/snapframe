@@ -176,8 +176,15 @@ export default defineUnlistedScript(() => {
     host.remove();
   }
 
+  /** The rect between two points, clipped to the viewport (a drag can leave the window). */
   function rectFrom(x0: number, y0: number, x1: number, y1: number): ViewportRect {
-    return { x: Math.min(x0, x1), y: Math.min(y0, y1), width: Math.abs(x1 - x0), height: Math.abs(y1 - y0) };
+    const clampX = (value: number) => Math.min(window.innerWidth, Math.max(0, value));
+    const clampY = (value: number) => Math.min(window.innerHeight, Math.max(0, value));
+    const left = clampX(Math.min(x0, x1));
+    const top = clampY(Math.min(y0, y1));
+    const right = clampX(Math.max(x0, x1));
+    const bottom = clampY(Math.max(y0, y1));
+    return { x: left, y: top, width: right - left, height: bottom - top };
   }
 
   function showBox(rect: ViewportRect, label?: string) {

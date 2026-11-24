@@ -32,9 +32,11 @@ export interface CapturePayload {
  * rectangle (name kept for compatibility with autosaved projects); an
  * arrow's width/height is the vector from its start to its end point and
  * may be negative. Type-specific settings (colors, text content, step
- * number, ...) live in `style`.
+ * number, ...) live in `style`. `magnify` is a loupe that enlarges the
+ * screenshot under its center; `spotlight` dims everything outside its rect.
  */
-export type EditorObjectType = 'image' | 'text' | 'arrow' | 'shape' | 'ellipse' | 'step' | 'blur' | 'highlight';
+export type EditorObjectType =
+  'image' | 'text' | 'arrow' | 'shape' | 'ellipse' | 'step' | 'blur' | 'highlight' | 'magnify' | 'spotlight';
 
 export interface EditorObject {
   id: string;

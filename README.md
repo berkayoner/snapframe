@@ -39,16 +39,19 @@ in the browser's IndexedDB and never leave the machine.
 - A shutter flash plays as you capture; the selection flies into the toolbar.
 - Full-page capture shows sticky headers once at the top and fixed bottom bars (cookie banners, chat bubbles) once at the bottom, hides scrollbars, handles smooth-scrolling pages, and puts the page back where the user left it.
 - Works from the toolbar popup, keyboard shortcuts and the right-click menu. Errors from shortcuts and the context menu appear as a badge on the toolbar icon.
+- **Quick actions:** instead of opening the editor, a capture can go straight to the clipboard or to your Downloads folder (set in Settings). A small card in the page confirms it and offers **Edit**.
 - Correct on HiDPI and fractional-scaling displays: canvas sizes are measured from the captured bitmap and kept within browser canvas limits.
 
 **Edit**
 
-- Tools: select, crop (free or 1:1, 4:3, 16:9, 4:5, 9:16), rectangle, ellipse, arrow (endpoint handles), text labels, numbered steps, highlighter, blur/pixelate redaction.
-- Color palette, stroke widths and fill modes. Multi-select with marquee or Shift, group move, resize handles, front/back ordering, duplicate, copy/paste.
-- Zoom (fit, 100%, Ctrl/⌘ + wheel at the cursor), undo/redo, and a full keyboard shortcut set (press `?` in the editor).
+- Tools: select, crop (free or 1:1, 4:3, 16:9, 4:5, 9:16), rectangle, ellipse, arrow (endpoint handles), text labels, numbered steps, magnifier, spotlight, highlighter, blur/pixelate redaction.
+- **Magnifier:** a loupe (circle or rounded square, 1.5–4×) that enlarges the screenshot under it, crisp at 2× export. Redactions stay redacted inside it.
+- **Spotlight:** dims everything outside a rectangle, rounded rectangle or ellipse. Several spotlights merge into one dimming; annotations stay bright on top. A single click frames the element under the pointer.
+- Color palette, stroke widths, fill modes and dashed lines. Arrows can have a head at one end, both ends or none (a plain line). Multi-select with marquee or Shift, group move, resize handles, front/back ordering, duplicate, copy/paste.
+- Zoom (fit, 100%, Ctrl/⌘ + wheel at the cursor), pan with Space + drag or the middle mouse button, undo/redo, and a full keyboard shortcut set (press `?` in the editor).
 - **Page-aware editing:** SnapFrame remembers the captured page's layout.
   - Shapes snap to real element edges, with guide lines.
-  - A single click with the rectangle, ellipse, highlight, blur or crop tool frames the element under the pointer.
+  - A single click with the rectangle, ellipse, spotlight, highlight, blur or crop tool frames the element under the pointer.
   - Hold Alt to draw freely.
 - **One-click redaction:** emails, phone numbers, card numbers (Luhn-checked), IBANs (mod-97), Turkish ID numbers (checksum) and common API keys in the captured page are detected. "Redact all" pixelates them in one undoable step.
 - Motion that explains: the active-tool indicator glides, zoom eases around the center, new steps and labels pop in, and redactions sweep in.
@@ -62,13 +65,22 @@ in the browser's IndexedDB and never leave the machine.
 - **Animated export (MP4, WebM, GIF):**
   - Annotations appear one by one. Arrows draw themselves, outlines trace in, the highlighter sweeps and steps pop.
   - An optional camera glides to each annotation and pulls back at the end.
-  - Encoded on-device with WebCodecs, with a live preview before export.
+  - An optional **virtual pointer** glides to each annotation and clicks it into place; arrows and highlights are dragged along their stroke.
+  - **Page scroll** for full-page captures: the page scrolls from top to bottom inside its frame (browser, laptop, phone…), and annotations appear as they come into view.
+  - Encoded on-device with WebCodecs, with a live preview before export. The last-used settings are remembered.
   - MP4 needs a platform H.264 encoder (Chrome, Edge). WebM and GIF work everywhere.
 
 **Library**
 
-- Holds the 30 most recent captures, with search, download and delete.
+- Holds the 30 most recent captures (or 60 / 120, see Settings), with search, download and delete. Cards show the edited picture, from small thumbnails.
 - Import any image by file picker, drag & drop, or paste with Ctrl/⌘+V.
+
+**Settings**
+
+- What happens after a capture: open the editor, copy to the clipboard, or download.
+- A file name template for every download (`{site}`, `{title}`, `{date}`, `{time}`), with a live example.
+- Library size, and a switch for page awareness (magnetic drawing and one-click redaction read element positions at capture time).
+- Open it from the popup, or right-click the toolbar icon.
 
 **Onboarding**
 
@@ -79,7 +91,7 @@ in the browser's IndexedDB and never leave the machine.
 - A full design language (logo, Iris and Spark palette, bundled Inter typeface, tokens): see [docs/brand](docs/brand/README.md).
 - Light and dark themes (follows the OS, or set your own), keyboard accessible, `prefers-reduced-motion` aware.
 - English and Turkish UI that follows the browser language (`public/_locales`).
-- Least-privilege permissions: `activeTab`, `scripting`, `contextMenus`. No host permissions.
+- Least-privilege permissions: `activeTab`, `scripting`, `contextMenus` and `offscreen`. `downloads` is optional, requested only if you turn on direct downloads (and handed back when you turn them off). No host permissions.
 
 ## Keyboard shortcuts
 
@@ -151,6 +163,8 @@ entrypoints/
   welcome/             onboarding page (opened on first install)
   editor/              editor page
   library/             capture library page
+  options/             settings page
+  offscreen/           hidden page that turns a saved capture into a download link
 src/
   capture/             capture modes, page-injected functions, geometry (pure)
   editor/              editor state (zustand), Konva canvas, tools, inspector, export actions
@@ -182,7 +196,15 @@ Key design decisions:
   during export.
 - **Redaction is destructive.** Blur and pixelate regions are re-sampled from
   the original screenshot and drawn over it, so the exported file never
-  contains the original pixels underneath.
+  contains the original pixels underneath. Magnifiers re-apply every
+  redaction to what they enlarge.
+- **Drawing layers.** The screenshot, then redactions, then spotlights, then
+  every other annotation (`src/annotations/order.ts`), so a spotlight dims
+  redactions with the page while arrows and labels stay bright.
+- **Settings live in IndexedDB.** The service worker decides what happens
+  after a capture and has no `localStorage`, so settings sit next to the
+  captures (`src/shared/settings.ts`). Remembered editor preferences stay in
+  `localStorage`.
 
 ## Privacy
 

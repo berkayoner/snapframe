@@ -133,10 +133,20 @@ async function encodeGif(scene: AnimationScene, options: EncodeOptions): Promise
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) throw new Error('Canvas 2D context unavailable.');
 
-  // One palette for the whole clip, taken from the final frame (where every annotation is
-  // visible) - per-frame palettes make flat UI colors shimmer.
-  scene.renderFrame(scene.timeline.duration, ctx, width, height);
-  const palette = quantize(ctx.getImageData(0, 0, width, height).data, 256);
+  // One palette for the whole clip - per-frame palettes make flat UI colors shimmer. It is
+  // sampled from several moments (a scrolling page shows different content over time),
+  // always including the final frame, where every annotation is visible.
+  const samples = [0.25, 0.5, 0.75, 1].map((fraction) => {
+    scene.renderFrame(scene.timeline.duration * fraction, ctx, width, height);
+    return ctx.getImageData(0, 0, width, height).data;
+  });
+  const pixels = new Uint8ClampedArray(samples.reduce((total, sample) => total + sample.length, 0));
+  let cursor = 0;
+  for (const sample of samples) {
+    pixels.set(sample, cursor);
+    cursor += sample.length;
+  }
+  const palette = quantize(pixels, 256);
 
   const gif = GIFEncoder();
   const frameCount = Math.max(1, Math.ceil(scene.timeline.duration * GIF_FPS));

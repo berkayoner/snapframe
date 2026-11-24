@@ -16,19 +16,22 @@ bir görsele dönüştürür. Tarayıcıdan çıkmanız gerekmez, hiçbir veri h
 yere gönderilmez.
 
 TAM İHTİYACINIZ OLANI YAKALAYIN
-• Görünen alan, seçtiğiniz bölge ya da tam sayfa (kaydırıp birleştirme).
+• Görünen alan, seçtiğiniz bölge, tek bir öğe ya da tam sayfa (kaydırıp birleştirme).
+• İsterseniz editörü hiç açmadan doğrudan panoya ya da İndirilenler klasörüne.
 • Klavye kısayolları (Alt+Shift+S / A / F), araç çubuğu düğmesi veya sağ tık menüsü.
 • Akıllı tam sayfa: yapışkan başlıklar ve çerez çubukları her parçada tekrar etmez, bir kez görünür.
 
 SANİYELER İÇİNDE NOT EKLEYİN
 • Dikdörtgen, elips, ok, metin etiketi, numaralı adımlar ve vurgulayıcı.
+• Küçük ayrıntılar için büyüteç, gerisini karartan odak.
 • E-postaları, isimleri ve diğer gizli bilgileri bulanıklaştırın ya da pikselleştirin.
 • En-boy oranı ön ayarlarıyla kırpma, çoklu seçim, geri al/yinele ve her araç için kısayol.
 • Sayfayı tanır: şekiller sayfadaki gerçek öğelere yapışır, tek tıkla bir kartı ya da düğmeyi çerçeveler.
 • Tek tıkla gizleme: e-posta, telefon, kart numarası, IBAN ve API anahtarları sizin için bulunur.
 
 CANLANDIRIN
-• Notlarınızın sırayla belirdiği ve kameranın onları takip ettiği kısa bir MP4, WebM ya da GIF dışa aktarın.
+• Notlarınızın sırayla belirdiği, kameranın onları takip ettiği ve bir imlecin tıklayarak yerleştirdiği kısa bir MP4, WebM ya da GIF dışa aktarın.
+• Tam sayfa çekimi, tarayıcı ya da cihaz çerçevesinin içinde akıcı bir kaydırma videosuna dönüştürün.
 
 GÜZELLEŞTİRİN
 • Kenar boşluğu, yuvarlak köşe ve gölgeyle degrade ya da düz renk arka planlar.

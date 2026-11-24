@@ -1,3 +1,6 @@
+import { buildFileName, DEFAULT_FILE_NAME_TEMPLATE } from '@/src/export/fileName';
+import { cachedSettings } from '@/src/shared/settings';
+
 export function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob(
@@ -23,24 +26,15 @@ export function downloadBlob(blob: Blob, filename: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function pad(value: number): string {
-  return String(value).padStart(2, '0');
+/** e.g. "snapframe-example-com-2026-09-04-143205.png" - the default template (see src/export/fileName.ts). */
+export function buildExportFileName(sourceUrl: string | undefined, createdAt: number, extension = 'png'): string {
+  return buildFileName(DEFAULT_FILE_NAME_TEMPLATE, { sourceUrl, createdAt }, extension);
 }
 
-/** e.g. "snapframe-example-com-2026-09-04-143205.png" (local time, so names sort chronologically). */
-export function buildExportFileName(sourceUrl: string | undefined, createdAt: number, extension = 'png'): string {
-  const date = new Date(createdAt);
-  const stamp =
-    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}-` +
-    `${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
-  let hostPart = 'screenshot';
-  if (sourceUrl) {
-    try {
-      const hostname = new URL(sourceUrl).hostname.replace(/^www\./, '');
-      if (hostname) hostPart = hostname.replace(/[^a-z0-9-]+/gi, '-').replace(/^-+|-+$/g, '') || hostPart;
-    } catch {
-      // Keep the fallback if the stored URL isn't parseable.
-    }
-  }
-  return `snapframe-${hostPart}-${stamp}.${extension}`;
+/** The export file name for a capture, following the user's file name template. */
+export function exportFileNameFor(
+  record: { sourceUrl?: string; sourceTitle?: string; createdAt: number },
+  extension: string,
+): string {
+  return buildFileName(cachedSettings().fileNameTemplate, record, extension);
 }

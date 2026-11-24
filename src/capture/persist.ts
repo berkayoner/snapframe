@@ -1,5 +1,6 @@
 import { db } from '@/src/storage/db';
 import { pruneHistory } from '@/src/storage/history';
+import { thumbnailFromBlob } from '@/src/storage/thumbnails';
 import type { CapturePayload, CaptureSource, CaptureWarning } from '@/src/shared/types';
 import type { PageSnapshot } from '@/src/capture/snapshot/types';
 
@@ -13,9 +14,9 @@ export async function persistCapture(
   blob: Blob,
   image: { width: number; height: number; devicePixelRatio: number },
   source: CaptureSource,
-  extras: { warnings?: CaptureWarning[]; snapshot?: PageSnapshot } = {},
+  extras: { warnings?: CaptureWarning[]; snapshot?: PageSnapshot; viewport?: { width: number; height: number } } = {},
 ): Promise<CapturePayload> {
-  const { warnings, snapshot } = extras;
+  const { warnings, snapshot, viewport } = extras;
   const captureId = crypto.randomUUID();
   const createdAt = Date.now();
 
@@ -31,8 +32,13 @@ export async function persistCapture(
     sourceType: source.type,
     warnings,
     snapshot,
+    viewport,
   });
   await pruneHistory();
+  // The thumbnail isn't needed to open the editor; add it once it's ready.
+  void thumbnailFromBlob(blob)
+    .then((thumbnail) => (thumbnail ? db.captures.update(captureId, { thumbnail }) : undefined))
+    .catch(() => undefined);
 
   return { captureId, createdAt, image, source, warnings };
 }

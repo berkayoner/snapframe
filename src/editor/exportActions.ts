@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import type Konva from 'konva';
 import { useEditorStore } from '@/src/editor/store/editorStore';
+import { finishEntranceAnimations } from '@/src/editor/Canvas';
 import { getMockupById } from '@/src/mockups/registry';
 import { ExportTooLargeError, predictOutputSize, renderFinalCanvas, type RenderOptions } from '@/src/export/render';
-import { buildExportFileName, canvasToBlob, downloadBlob } from '@/src/export/png';
+import { canvasToBlob, downloadBlob, exportFileNameFor } from '@/src/export/png';
 import { copyBlobToClipboard } from '@/src/export/clipboard';
 import { loadPrefs, savePrefs, type ExportFormat, type ExportScale } from '@/src/shared/prefs';
 import { t } from '@/src/shared/i18n';
@@ -65,6 +66,7 @@ export function predictCurrentOutputSize(exportScale: number) {
 }
 
 async function prepareStage(stage: Konva.Stage) {
+  finishEntranceAnimations();
   // Commit an in-progress text edit first so the label is visible (and included) when we render.
   if (useEditorStore.getState().editingTextId) {
     (document.activeElement as HTMLElement | null)?.blur();
@@ -106,7 +108,7 @@ export function downloadImage(stage: Konva.Stage | null, record: CaptureRecord):
         format === 'jpg' ? 'image/jpeg' : 'image/png',
         format === 'jpg' ? quality / 100 : undefined,
       );
-      downloadBlob(blob, buildExportFileName(record.sourceUrl, record.createdAt, format));
+      downloadBlob(blob, exportFileNameFor(record, format));
       toast.success(t('toastDownloaded'));
       return true;
     } catch (error) {

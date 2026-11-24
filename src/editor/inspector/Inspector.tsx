@@ -9,6 +9,9 @@ import {
   Bold,
   CopyPlus,
   Laptop,
+  Minus,
+  MoveHorizontal,
+  MoveRight,
   Smartphone,
   Tablet,
   Trash2,
@@ -19,10 +22,16 @@ import {
 import { useEditorStore } from '@/src/editor/store/editorStore';
 import { ANNOTATION_COLORS, STROKE_WIDTHS } from '@/src/annotations/color';
 import { readObjectColor, supportsColor, supportsStrokeWidth } from '@/src/annotations/styleOps';
-import { readShapeStyle, type FillMode } from '@/src/annotations/shapes/shapeStyle';
+import { readArrowStyle, readShapeStyle, type ArrowHeads, type FillMode } from '@/src/annotations/shapes/shapeStyle';
 import { FONT_FAMILIES, readTextData, type TextAlign, type TextObjectData } from '@/src/annotations/text/textStyle';
 import { BLUR_STRENGTH_RANGE, readBlurStyle, type RedactMode } from '@/src/annotations/blur/blurStyle';
 import { readStepStyle } from '@/src/annotations/step/stepStyle';
+import { MAGNIFY_ZOOM_RANGE, readMagnifyStyle, type MagnifyShapeKind } from '@/src/annotations/magnify/magnifyStyle';
+import {
+  SPOTLIGHT_DIM_RANGE,
+  readSpotlightStyle,
+  type SpotlightShapeKind,
+} from '@/src/annotations/spotlight/spotlightStyle';
 import {
   BACKGROUND_PRESETS,
   PADDING_RANGE,
@@ -51,6 +60,8 @@ const TYPE_LABEL: Record<EditorObjectType, MessageKey> = {
   step: 'toolStep',
   highlight: 'toolHighlight',
   blur: 'toolBlur',
+  magnify: 'toolMagnify',
+  spotlight: 'toolSpotlight',
 };
 
 const STROKE_LABELS = ['S', 'M', 'L', 'XL'];
@@ -208,10 +219,16 @@ function SelectionPanel({ objects, unit }: { objects: EditorObject[]; unit: numb
   const colorable = objects.filter(supportsColor);
   const strokable = objects.filter(supportsStrokeWidth);
   const boxes = objects.filter((object) => object.type === 'shape' || object.type === 'ellipse');
+  const arrows = objects.filter((object) => object.type === 'arrow');
+  const firstArrow = arrows[0];
   const blurs = objects.filter((object) => object.type === 'blur');
+  const lenses = objects.filter((object) => object.type === 'magnify');
+  const spots = objects.filter((object) => object.type === 'spotlight');
   const firstStrokable = strokable[0];
   const firstBox = boxes[0];
   const firstBlur = blurs[0];
+  const firstLens = lenses[0];
+  const firstSpot = spots[0];
 
   const title = single ? t(TYPE_LABEL[first.type]) : t('selectionCount', objects.length);
 
@@ -245,6 +262,39 @@ function SelectionPanel({ objects, unit }: { objects: EditorObject[]; unit: numb
           value={(Number(firstStrokable.style?.strokeWidth) || 4 * unit) / unit}
           onChange={applyStrokeWidth}
         />
+      )}
+
+      {firstStrokable && strokable.length === objects.length && (
+        <Field label={t('lineStyle')}>
+          <Segmented<number>
+            label={t('lineStyle')}
+            value={firstStrokable.style?.dashed === true ? 1 : 0}
+            onChange={(dashed) => patchEach(strokable, { dashed: dashed === 1 })}
+            options={[
+              { value: 0, label: <span className="line-sample" aria-hidden />, title: t('lineSolid') },
+              {
+                value: 1,
+                label: <span className="line-sample line-sample--dashed" aria-hidden />,
+                title: t('lineDashed'),
+              },
+            ]}
+          />
+        </Field>
+      )}
+
+      {firstArrow && arrows.length === objects.length && (
+        <Field label={t('arrowHeads')}>
+          <Segmented<ArrowHeads>
+            label={t('arrowHeads')}
+            value={readArrowStyle(firstArrow.style).heads}
+            onChange={(heads) => patchEach(arrows, { heads })}
+            options={[
+              { value: 'end', label: <MoveRight size={16} />, title: t('arrowHeadEnd') },
+              { value: 'both', label: <MoveHorizontal size={16} />, title: t('arrowHeadBoth') },
+              { value: 'none', label: <Minus size={16} />, title: t('arrowHeadNone') },
+            ]}
+          />
+        </Field>
       )}
 
       {firstBox && boxes.length === objects.length && (
@@ -315,6 +365,66 @@ function SelectionPanel({ objects, unit }: { objects: EditorObject[]; unit: numb
             onChange={(value) => patchEach(blurs, { strength: Math.round(value * unit) }, 'blur:strength')}
             onCommit={endCoalesce}
           />
+        </>
+      )}
+
+      {firstLens && lenses.length === objects.length && (
+        <>
+          <Slider
+            label={t('magnifyZoom')}
+            value={readMagnifyStyle(firstLens.style).zoom}
+            min={MAGNIFY_ZOOM_RANGE.min}
+            max={MAGNIFY_ZOOM_RANGE.max}
+            step={MAGNIFY_ZOOM_RANGE.step}
+            format={(value) => `${value}×`}
+            onChange={(zoom) => patchEach(lenses, { zoom }, 'magnify:zoom')}
+            onCommit={endCoalesce}
+          />
+          <Field label={t('shapeTitle')}>
+            <Segmented<MagnifyShapeKind>
+              label={t('shapeTitle')}
+              value={readMagnifyStyle(firstLens.style).shape}
+              onChange={(shape) => patchEach(lenses, { shape })}
+              options={[
+                { value: 'circle', label: t('shapeCircle') },
+                { value: 'rounded', label: t('shapeRounded') },
+              ]}
+            />
+          </Field>
+        </>
+      )}
+
+      {firstSpot && spots.length === objects.length && (
+        <>
+          <Slider
+            label={t('spotlightDim')}
+            value={Math.round(readSpotlightStyle(firstSpot.style).dim * 100)}
+            min={SPOTLIGHT_DIM_RANGE.min}
+            max={SPOTLIGHT_DIM_RANGE.max}
+            step={SPOTLIGHT_DIM_RANGE.step}
+            format={(value) => `${value}%`}
+            // All spotlights share one dimming layer, so the setting applies to every one of them.
+            onChange={(value) =>
+              patchEach(
+                useEditorStore.getState().objects.filter((object) => object.type === 'spotlight'),
+                { dim: value / 100 },
+                'spotlight:dim',
+              )
+            }
+            onCommit={endCoalesce}
+          />
+          <Field label={t('shapeTitle')}>
+            <Segmented<SpotlightShapeKind>
+              label={t('shapeTitle')}
+              value={readSpotlightStyle(firstSpot.style).shape}
+              onChange={(shape) => patchEach(spots, { shape })}
+              options={[
+                { value: 'rect', label: t('shapeRect') },
+                { value: 'rounded', label: t('shapeRounded') },
+                { value: 'ellipse', label: t('shapeEllipse') },
+              ]}
+            />
+          </Field>
         </>
       )}
 

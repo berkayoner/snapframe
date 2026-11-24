@@ -1,5 +1,5 @@
 import { Arrow } from 'react-konva';
-import { arrowPointerSize, readArrowStyle } from '@/src/annotations/shapes/shapeStyle';
+import { arrowPointerSize, dashPattern, readArrowStyle } from '@/src/annotations/shapes/shapeStyle';
 import type { CommonShapeProps } from '@/src/editor/shapes/types';
 import type { EditorObject } from '@/src/shared/types';
 
@@ -26,6 +26,10 @@ export function ArrowShape({ object, width: _width, height: _height, ...common }
       strokeWidth={style.strokeWidth}
       pointerLength={pointer}
       pointerWidth={pointer}
+      pointerAtBeginning={style.heads === 'both'}
+      pointerAtEnding={style.heads !== 'none'}
+      dash={dashPattern(style.strokeWidth, true)}
+      dashEnabled={style.dashed}
       lineCap="round"
       lineJoin="round"
       hitStrokeWidth={Math.max(style.strokeWidth * 2, 16)}

@@ -14,6 +14,8 @@ import { placeText } from '@/src/annotations/text/text.tool';
 import { placeStep } from '@/src/annotations/step/step.tool';
 import { readTextData } from '@/src/annotations/text/textStyle';
 import { objectBounds, rectsIntersect } from '@/src/annotations/styleOps';
+import { renderOrder } from '@/src/annotations/order';
+import { readMagnifyStyle } from '@/src/annotations/magnify/magnifyStyle';
 import { clampRect, isUsableCrop, useCropStore } from '@/src/editor/tools/crop.tool';
 import { canvasBoxes, canvasSensitive, snapThreshold } from '@/src/editor/smart/canvasBoxes';
 import { snapRect, type Rect as SmartRect, type SnapGuide } from '@/src/editor/smart/snap';
@@ -50,11 +52,27 @@ const CORNER_ANCHORS = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 
 type Gesture = { kind: 'draw' } | { kind: 'crop' } | { kind: 'marquee'; start: Point; additive: boolean };
 
+/** Entrance animations still playing, each with a function that jumps it to its end state. */
+const runningEntrances = new Map<Konva.Node, () => void>();
+
+/**
+ * Jumps every running entrance animation to its end. Exports and the
+ * animated export call this first, so an object placed a moment ago is
+ * never captured half-faded.
+ */
+export function finishEntranceAnimations(): void {
+  for (const finish of Array.from(runningEntrances.values())) finish();
+}
+
+export function hasRunningEntrances(): boolean {
+  return runningEntrances.size > 0;
+}
+
 /**
  * Entrance animation for objects added by a click or a batch (steps, labels,
- * one-click redactions, pastes): fade in and grow from 85% around their
- * center (arrows grow from their tail). Drawn shapes don't animate - their
- * draft was already on screen.
+ * lenses, one-click redactions, pastes): fade in and grow from 85% around
+ * their center (arrows grow from their tail). Drawn shapes don't animate -
+ * their draft was already on screen.
  */
 function animateEntrance(node: Konva.Node, object: EditorObject, delayMs: number) {
   const isArrow = object.type === 'arrow';
@@ -64,6 +82,7 @@ function animateEntrance(node: Konva.Node, object: EditorObject, delayMs: number
   const y0 = node.y();
   const width = Math.abs(object.width);
   const height = Math.abs(object.height);
+  const end = { opacity: object.opacity ?? 1, scaleX: 1, scaleY: 1, x: x0, y: y0 };
   node.setAttrs({
     opacity: 0,
     scaleX: from,
@@ -71,17 +90,24 @@ function animateEntrance(node: Konva.Node, object: EditorObject, delayMs: number
     x: isArrow ? x0 : x0 + (width * (1 - from)) / 2,
     y: isArrow ? y0 : y0 + (height * (1 - from)) / 2,
   });
-  window.setTimeout(() => {
-    node.to({
-      opacity: object.opacity ?? 1,
-      scaleX: 1,
-      scaleY: 1,
-      x: x0,
-      y: y0,
+  let tween: Konva.Tween | null = null;
+  const timer = window.setTimeout(() => {
+    tween = new Konva.Tween({
+      node,
+      ...end,
       duration: pop ? 0.34 : 0.26,
       easing: pop ? Konva.Easings.BackEaseOut : Konva.Easings.EaseOut,
+      onFinish: () => runningEntrances.delete(node),
     });
+    tween.play();
   }, delayMs);
+  runningEntrances.set(node, () => {
+    window.clearTimeout(timer);
+    tween?.destroy();
+    node.setAttrs(end);
+    node.getLayer()?.batchDraw();
+    runningEntrances.delete(node);
+  });
 }
 
 function normalizeRect(a: Point, b: Point) {
@@ -129,7 +155,13 @@ export function Canvas({ image, stageRef }: CanvasProps) {
 
   const selectedObjects = objects.filter((object) => selectedIds.includes(object.id));
   const transformable = selectedObjects.filter((object) => object.type !== 'arrow');
-  const keepRatio = transformable.some((object) => object.type === 'step' || object.type === 'text');
+  const keepRatio = transformable.some(
+    (object) =>
+      object.type === 'step' ||
+      object.type === 'text' ||
+      (object.type === 'magnify' && readMagnifyStyle(object.style).shape === 'circle'),
+  );
+  const redactions = objects.filter((object) => object.type === 'blur');
 
   // After any size or zoom change, redraw synchronously before the browser paints.
   // react-konva applies width, height and scale one at a time, and Konva redraws
@@ -421,7 +453,7 @@ export function Canvas({ image, stageRef }: CanvasProps) {
         style={{ cursor }}
       >
         <Layer ref={layerRef}>
-          {objects.map((object) => (
+          {renderOrder(objects).map((object) => (
             <CanvasObject
               key={object.id}
               object={object}
@@ -431,6 +463,7 @@ export function Canvas({ image, stageRef }: CanvasProps) {
               interactive={isSelectMode && !isLockedObject(object)}
               hidden={object.id === editingTextId}
               handlers={handlers}
+              redactions={redactions}
             />
           ))}
           {draft && (
@@ -441,6 +474,7 @@ export function Canvas({ image, stageRef }: CanvasProps) {
               imageOffset={imageOffset}
               zoom={zoom}
               interactive={false}
+              redactions={redactions}
             />
           )}
           {selectedArrows.map((arrow) => (

@@ -23,6 +23,10 @@ export interface CaptureRecord {
   warnings?: CaptureWarning[];
   /** Element boxes + sensitive-data positions taken at capture time (absent for imports and older captures). */
   snapshot?: PageSnapshot;
+  /** The browser viewport in CSS px, for full-page captures (sizes the scrolling video's "screen"). */
+  viewport?: { width: number; height: number };
+  /** Small preview for the library and popup (see src/storage/thumbnails.ts); added just after saving. */
+  thumbnail?: Blob;
 }
 
 /**
@@ -39,11 +43,20 @@ export interface ProjectRecord {
   objects: EditorObject[];
   beautify: BeautifySettings;
   mockupId: string | null;
+  /** Preview of the edited picture (annotations, frame, mockup), refreshed by autosave. */
+  thumbnail?: Blob;
+}
+
+/** Extension settings (see src/shared/settings.ts) - in IndexedDB so the service worker can read them too. */
+export interface SettingsRecord {
+  key: 'settings';
+  value: unknown;
 }
 
 class SnapFrameDatabase extends Dexie {
   captures!: Table<CaptureRecord, string>;
   projects!: Table<ProjectRecord, string>;
+  settings!: Table<SettingsRecord, string>;
 
   constructor() {
     super('snapframe');
@@ -53,6 +66,11 @@ class SnapFrameDatabase extends Dexie {
     this.version(2).stores({
       captures: 'captureId, createdAt',
       projects: 'captureId, updatedAt',
+    });
+    this.version(3).stores({
+      captures: 'captureId, createdAt',
+      projects: 'captureId, updatedAt',
+      settings: 'key',
     });
   }
 }

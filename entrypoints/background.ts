@@ -8,6 +8,8 @@ import { captureErrors, toUserMessage } from '@/src/capture/errors';
 import { isMessage, type CaptureResponse, type RuntimeMessage, type SelectionMode } from '@/src/shared/messages';
 import { playShutter } from '@/src/capture/shutter';
 import { takeSnapshot } from '@/src/capture/snapshot/take';
+import { copyCaptureFromPage, downloadCapture, getCaptureRecord } from '@/src/capture/quickActions';
+import { loadSettings, type Settings } from '@/src/shared/settings';
 import { t } from '@/src/shared/i18n';
 import type { CapturePayload } from '@/src/shared/types';
 
@@ -19,6 +21,7 @@ const MENU = {
   fullPage: 'snapframe-capture-full-page',
   library: 'snapframe-open-library',
   actionLibrary: 'snapframe-action-library',
+  actionSettings: 'snapframe-action-settings',
 } as const;
 
 const COMMAND = {
@@ -83,17 +86,61 @@ function reportProgress(done: number, total: number): void {
   void setBadge(total > 0 ? `${Math.round((done / total) * 100)}%` : '…');
 }
 
+/** Why the editor opened instead of the chosen quick action (it shows a note). */
+type EditorNotice = 'copy-failed' | 'download-failed';
+
 /** Opens the editor right next to the tab that was captured. */
-async function openEditor(payload: CapturePayload, sourceTab?: CapturableTab): Promise<void> {
+async function openEditor(
+  payload: Pick<CapturePayload, 'captureId'>,
+  sourceTab?: { id?: number; index: number },
+  notice?: EditorNotice,
+): Promise<void> {
+  const query = `captureId=${encodeURIComponent(payload.captureId)}${notice ? `&notice=${notice}` : ''}`;
   await browser.tabs.create({
-    url: browser.runtime.getURL(`/editor.html?captureId=${encodeURIComponent(payload.captureId)}`),
+    url: browser.runtime.getURL(`/editor.html?${query}`),
     index: sourceTab ? sourceTab.index + 1 : undefined,
     openerTabId: sourceTab?.id,
   });
 }
 
+/**
+ * What happens after a capture, per the settings: open the editor, or a
+ * quick action (copy / download) confirmed by a card in the page. If a
+ * quick action fails, the editor opens instead with a note - the capture
+ * is already saved, so nothing is lost.
+ */
+async function afterCapture(payload: CapturePayload, tab: CapturableTab, settings: Settings): Promise<void> {
+  if (settings.afterCapture === 'editor') {
+    await openEditor(payload, tab);
+    return;
+  }
+  const record = await getCaptureRecord(payload.captureId);
+  const done = record
+    ? settings.afterCapture === 'copy'
+      ? await copyCaptureFromPage(tab.id, record)
+      : await downloadCapture(tab.id, record, settings)
+    : false;
+  if (!done) await openEditor(payload, tab, settings.afterCapture === 'copy' ? 'copy-failed' : 'download-failed');
+}
+
+/**
+ * Runs the after-capture step. Opening the editor is awaited (callers
+ * expect it open); quick actions run on after the capture call returns, so
+ * a popup can close first and hand focus back to the page - the clipboard
+ * only works in a focused document.
+ */
+async function finishCapture(payload: CapturePayload, tab: CapturableTab, settings: Settings): Promise<void> {
+  const follow = afterCapture(payload, tab, settings);
+  if (settings.afterCapture === 'editor') await follow;
+  else follow.catch(reportBackgroundError);
+}
+
 async function openLibrary(): Promise<void> {
   await browser.tabs.create({ url: browser.runtime.getURL('/library.html') });
+}
+
+async function openSettings(): Promise<void> {
+  await browser.runtime.openOptionsPage();
 }
 
 /**
@@ -124,6 +171,7 @@ async function readViewport(
 
 async function runVisibleCapture(devicePixelRatio?: number): Promise<CapturePayload> {
   return exclusive(async () => {
+    const settings = await loadSettings();
     const tab = await getActiveCapturableTab();
     const viewport = await readViewport(tab.id);
     const region = viewport ? { x: 0, y: 0, width: viewport.innerWidth, height: viewport.innerHeight } : null;
@@ -133,21 +181,22 @@ async function runVisibleCapture(devicePixelRatio?: number): Promise<CapturePayl
         viewportWidth: viewport?.innerWidth,
         devicePixelRatio: viewport?.devicePixelRatio ?? devicePixelRatio ?? 1,
       },
-      region ? () => takeSnapshot(tab.id, region, { documentCoords: false }) : undefined,
+      region && settings.pageAware ? () => takeSnapshot(tab.id, region, { documentCoords: false }) : undefined,
     );
     await playShutter(tab.id, region);
-    await openEditor(payload, tab);
+    await finishCapture(payload, tab, settings);
     return payload;
   });
 }
 
 async function runFullPageCapture(): Promise<CapturePayload> {
   return exclusive(async () => {
+    const settings = await loadSettings();
     const tab = await getActiveCapturableTab();
     try {
-      const payload = await captureFullPage(tab, reportProgress);
+      const payload = await captureFullPage(tab, reportProgress, { pageAware: settings.pageAware });
       await playShutter(tab.id, null);
-      await openEditor(payload, tab);
+      await finishCapture(payload, tab, settings);
       return payload;
     } finally {
       clearBadge();
@@ -179,12 +228,13 @@ async function runAreaCapture(
 ) {
   return exclusive(async () => {
     assertCapturable(tab);
+    const settings = await loadSettings();
     const payload = await captureArea(tab, message.rect, message.devicePixelRatio, message.viewportWidth, {
       type: message.mode === 'element' ? 'element' : 'area',
-      getSnapshot: () => takeSnapshot(tab.id, message.rect, { documentCoords: false }),
+      getSnapshot: settings.pageAware ? () => takeSnapshot(tab.id, message.rect, { documentCoords: false }) : undefined,
     });
     await playShutter(tab.id, message.rect);
-    await openEditor(payload, tab);
+    await finishCapture(payload, tab, settings);
     return payload;
   });
 }
@@ -211,6 +261,7 @@ function createContextMenus(): void {
     browser.contextMenus.create({ id: 'snapframe-separator', parentId: MENU.parent, type: 'separator', contexts });
     browser.contextMenus.create({ id: MENU.library, parentId: MENU.parent, title: t('openLibrary'), contexts });
     browser.contextMenus.create({ id: MENU.actionLibrary, title: t('openLibrary'), contexts: ['action'] });
+    browser.contextMenus.create({ id: MENU.actionSettings, title: t('openSettings'), contexts: ['action'] });
   });
 }
 
@@ -241,6 +292,9 @@ export default defineBackground(() => {
       case MENU.actionLibrary:
         void openLibrary();
         break;
+      case MENU.actionSettings:
+        void openSettings();
+        break;
     }
   });
 
@@ -264,6 +318,10 @@ export default defineBackground(() => {
     }
     if (isMessage(message, 'start-full-page-capture')) {
       return respond(runFullPageCapture(), sendResponse);
+    }
+    if (isMessage(message, 'open-editor') && sender.tab) {
+      void openEditor({ captureId: message.captureId }, sender.tab);
+      return undefined;
     }
     return undefined;
   });

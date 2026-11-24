@@ -6,7 +6,7 @@ Microsoft Edge Add-ons store, which accepts the same package and images).
 | File                                                               | Store field              | Size     |
 | ------------------------------------------------------------------ | ------------------------ | -------- |
 | `icon-128.png`                                                     | Store icon               | 128×128  |
-| `<lang>/screenshot-1…4.png`                                        | Screenshots (per locale) | 1280×800 |
+| `<lang>/screenshot-1…5.png`                                        | Screenshots (per locale) | 1280×800 |
 | `<lang>/promo-small.png`                                           | Small promo tile         | 440×280  |
 | `<lang>/promo-marquee.png`                                         | Marquee promo tile       | 1400×560 |
 | [`listing.en.md`](listing.en.md), [`listing.tr.md`](listing.tr.md) | Listing text, per locale | —        |
@@ -41,6 +41,13 @@ material.
   scrolls the page for a full-page capture, then restores the page.
 - `contextMenus`: adds the "SnapFrame" capture entries to the right-click
   menu.
+- `offscreen`: when the user chooses "Download" as the after-capture action,
+  a hidden extension page turns the screenshot (already stored locally in
+  IndexedDB) into a blob URL for `chrome.downloads`, which a service worker
+  cannot create. Nothing is loaded from the network.
+- `downloads` (optional permission): requested from the Settings page only if
+  the user picks direct downloads, to save captures to the Downloads folder;
+  released again when they switch back.
 
 **Remote code:** none. All code ships in the package.
 

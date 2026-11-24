@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
-import { Keyboard, Library, MousePointerClick, Pin, ShieldCheck, Sparkles } from 'lucide-react';
+import { Keyboard, Library, MousePointerClick, Pin, Settings, ShieldCheck, Sparkles } from 'lucide-react';
 import { Logo } from '@/src/shared/Logo';
 import { ThemeToggle } from '@/src/shared/ThemeToggle';
 import { t, type MessageKey } from '@/src/shared/i18n';
@@ -106,6 +106,14 @@ function App() {
               <button type="button" className="btn btn--lg" onClick={() => openPage('chrome://extensions/shortcuts')}>
                 <Keyboard size={17} />
                 {t('customizeShortcuts')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--lg btn--ghost"
+                onClick={() => void browser.runtime.openOptionsPage()}
+              >
+                <Settings size={17} />
+                {t('openSettings')}
               </button>
             </div>
           </div>

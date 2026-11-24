@@ -2,12 +2,14 @@ import {
   Circle,
   Crop,
   Droplet,
+  Focus,
   Highlighter,
   ListOrdered,
   MousePointer2,
   MoveUpRight,
   Square,
   Type,
+  ZoomIn,
   type LucideIcon,
 } from 'lucide-react';
 import type { EditorTool } from '@/src/editor/store/editorStore';
@@ -20,7 +22,7 @@ export interface ToolDefinition {
   key: string;
   label: MessageKey;
   /** Toolbar group, rendered with separators between groups. */
-  group: 'pointer' | 'draw' | 'redact';
+  group: 'pointer' | 'draw' | 'focus' | 'redact';
 }
 
 export const TOOLS: ToolDefinition[] = [
@@ -31,6 +33,8 @@ export const TOOLS: ToolDefinition[] = [
   { id: 'arrow', icon: MoveUpRight, key: 'A', label: 'toolArrow', group: 'draw' },
   { id: 'text', icon: Type, key: 'T', label: 'toolText', group: 'draw' },
   { id: 'step', icon: ListOrdered, key: 'N', label: 'toolStep', group: 'draw' },
+  { id: 'magnify', icon: ZoomIn, key: 'M', label: 'toolMagnify', group: 'focus' },
+  { id: 'spotlight', icon: Focus, key: 'F', label: 'toolSpotlight', group: 'focus' },
   { id: 'highlight', icon: Highlighter, key: 'H', label: 'toolHighlight', group: 'redact' },
   { id: 'blur', icon: Droplet, key: 'B', label: 'toolBlur', group: 'redact' },
 ];

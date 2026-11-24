@@ -1,9 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type DragEvent } from 'react';
 import { browser } from 'wxt/browser';
 import { Download, ImagePlus, LoaderCircle, Search, ShieldCheck, Trash2, Upload } from 'lucide-react';
-import { clearAllCaptures, deleteCapture, listAllCaptures, MAX_HISTORY_ITEMS } from '@/src/storage/history';
+import {
+  backfillThumbnails,
+  clearAllCaptures,
+  deleteCapture,
+  listAllCaptures,
+  withPreviews,
+  type CapturePreview,
+} from '@/src/storage/history';
+import { cachedSettings, loadSettings } from '@/src/shared/settings';
 import { ACCEPTED_IMAGE_TYPES, ImportError, importImageBlob } from '@/src/storage/importImage';
-import { buildExportFileName, downloadBlob } from '@/src/export/png';
+import { downloadBlob, exportFileNameFor } from '@/src/export/png';
 import type { CaptureRecord } from '@/src/storage/db';
 import { hostOf, SOURCE_TYPE_LABEL } from '@/src/shared/labels';
 import { Dialog } from '@/src/shared/Dialog';
@@ -30,11 +38,14 @@ type Confirm = { kind: 'delete'; record: CaptureRecord } | { kind: 'clear' } | n
 function CaptureCard({
   record,
   thumbUrl,
+  edited,
   index,
   onDelete,
 }: {
   record: CaptureRecord;
-  thumbUrl: string;
+  thumbUrl: string | undefined;
+  /** The thumbnail shows the edited picture (annotations, frame). */
+  edited: boolean;
   /** Position in the grid, for the staggered entrance. */
   index: number;
   onDelete: (record: CaptureRecord) => void;
@@ -46,7 +57,7 @@ function CaptureCard({
   return (
     <article className="capture-card" style={{ '--i': index } as CSSProperties}>
       <a className="capture-card__thumb" href={href} aria-label={t('openInEditor', title)}>
-        <img src={thumbUrl} alt="" loading="lazy" />
+        {thumbUrl && <img src={thumbUrl} alt="" loading="lazy" decoding="async" data-edited={edited} />}
         <span className="capture-card__badge">{t(SOURCE_TYPE_LABEL[record.sourceType])}</span>
       </a>
       <div className="capture-card__body">
@@ -69,12 +80,7 @@ function CaptureCard({
           aria-label={t('downloadOriginal')}
           data-tooltip={t('downloadOriginal')}
           data-tooltip-side="top"
-          onClick={() =>
-            downloadBlob(
-              record.blob,
-              buildExportFileName(record.sourceUrl, record.createdAt, extensionFor(record.blob)),
-            )
-          }
+          onClick={() => downloadBlob(record.blob, exportFileNameFor(record, extensionFor(record.blob)))}
         >
           <Download size={15} />
         </button>
@@ -95,27 +101,35 @@ function CaptureCard({
 
 function App() {
   const [records, setRecords] = useState<CaptureRecord[] | null>(null);
+  const [previews, setPreviews] = useState<Map<string, CapturePreview>>(new Map());
   const [query, setQuery] = useState('');
   const [confirm, setConfirm] = useState<Confirm>(null);
   const [dragging, setDragging] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [historyLimit, setHistoryLimit] = useState(() => cachedSettings().historyLimit);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragDepth = useRef(0);
 
   const reload = useCallback(() => {
     listAllCaptures()
-      .then(setRecords)
+      .then(async (list) => {
+        const withImages = await withPreviews(list);
+        setRecords(list);
+        setPreviews(new Map(withImages.map((preview) => [preview.record.captureId, preview])));
+        void backfillThumbnails(list);
+      })
       .catch(() => setRecords([]));
   }, []);
 
   useEffect(() => {
     document.title = `${t('libraryTitle')} · SnapFrame`;
     reload();
+    void loadSettings().then((settings) => setHistoryLimit(settings.historyLimit));
   }, [reload]);
 
   const thumbUrls = useMemo(
-    () => new Map((records ?? []).map((record) => [record.captureId, URL.createObjectURL(record.blob)])),
-    [records],
+    () => new Map(Array.from(previews, ([captureId, preview]) => [captureId, URL.createObjectURL(preview.image)])),
+    [previews],
   );
   useEffect(() => () => thumbUrls.forEach((url) => URL.revokeObjectURL(url)), [thumbUrls]);
 
@@ -204,7 +218,7 @@ function App() {
           <div>
             <h1 className="library__title">{t('libraryTitle')}</h1>
             <p className="library__subtitle">
-              {records ? t('libraryCount', [records.length, MAX_HISTORY_ITEMS]) : t('loading')}
+              {records ? t('libraryCount', [records.length, historyLimit]) : t('loading')}
             </p>
           </div>
         </div>
@@ -282,7 +296,8 @@ function App() {
                     key={record.captureId}
                     index={index}
                     record={record}
-                    thumbUrl={thumbUrls.get(record.captureId) ?? ''}
+                    thumbUrl={thumbUrls.get(record.captureId)}
+                    edited={previews.get(record.captureId)?.edited ?? false}
                     onDelete={(target) => setConfirm({ kind: 'delete', record: target })}
                   />
                 ))}
@@ -294,7 +309,7 @@ function App() {
 
       <footer className="library__footer">
         <ShieldCheck size={14} />
-        {t('privacyNote', MAX_HISTORY_ITEMS)}
+        {t('privacyNote', historyLimit)}
       </footer>
 
       {dragging && (

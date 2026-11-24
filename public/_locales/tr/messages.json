@@ -611,7 +611,7 @@
     "message": "Güzelleştirin ve paylaşın"
   },
   "welcomeStep3Body": {
-    "message": "Not ekleyin, hassas bilgileri gizleyin, arka plan ya da cihaz çerçevesi ekleyin — sonra kopyalayın veya indirin."
+    "message": "Not ekleyin, büyütün, hassas bilgileri gizleyin, arka plan ya da cihaz çerçevesi ekleyin — sonra kopyalayın, indirin ya da kısa bir video olarak dışa aktarın."
   },
   "welcomePrivacyTitle": {
     "message": "Tasarımı gereği gizli"
@@ -733,7 +733,7 @@
     "message": "Animasyon oluşturulamadı."
   },
   "animateEmpty": {
-    "message": "Ok, kutu, etiket ya da adım ekleyin — sırayla belirecekler."
+    "message": "Ok, kutu, etiket, adım, büyüteç ya da odak ekleyin — sırayla belirecekler."
   },
   "animateMp4Unsupported": {
     "message": "Bu tarayıcı MP4 oluşturamıyor — WebM ya da GIF kullanın."
@@ -745,5 +745,182 @@
         "content": "$1"
       }
     }
+  },
+  "toolMagnify": {
+    "message": "Büyüteç"
+  },
+  "toolSpotlight": {
+    "message": "Odak"
+  },
+  "magnifyZoom": {
+    "message": "Büyütme"
+  },
+  "shapeTitle": {
+    "message": "Biçim"
+  },
+  "shapeCircle": {
+    "message": "Daire"
+  },
+  "shapeRounded": {
+    "message": "Yuvarlatılmış"
+  },
+  "shapeRect": {
+    "message": "Köşeli"
+  },
+  "shapeEllipse": {
+    "message": "Elips"
+  },
+  "spotlightDim": {
+    "message": "Çevreyi karart"
+  },
+  "animateMode": {
+    "message": "Animasyon"
+  },
+  "animateModeNotes": {
+    "message": "Notlar"
+  },
+  "animateModeScroll": {
+    "message": "Sayfa kaydırma"
+  },
+  "animateScrollHint": {
+    "message": "Sayfa, çerçevesinin içinde yukarıdan aşağı kayar; notlarınız göründükçe belirir."
+  },
+  "animateCursor": {
+    "message": "Sanal imleç"
+  },
+  "animateCursorHint": {
+    "message": "Bir imleç her nota gider ve tıklayarak yerleştirir."
+  },
+  "openSettings": {
+    "message": "Ayarlar"
+  },
+  "settingsTitle": {
+    "message": "Ayarlar"
+  },
+  "settingsSaved": {
+    "message": "Kaydedildi"
+  },
+  "settingsPrivacy": {
+    "message": "Ayarlar ve çekimler bu cihazda kalır."
+  },
+  "afterCaptureTitle": {
+    "message": "Çekimden sonra"
+  },
+  "afterCaptureHint": {
+    "message": "Tüm yakalama yöntemleri için geçerlidir: araç çubuğu, kısayollar ve sağ tık menüsü. Her çekim ayrıca kütüphaneye kaydedilir."
+  },
+  "afterEditor": {
+    "message": "Editörde aç"
+  },
+  "afterEditorDescription": {
+    "message": "Not ekleyin, çerçeveleyin, dışa aktarın."
+  },
+  "afterCopy": {
+    "message": "Panoya kopyala"
+  },
+  "afterCopyDescription": {
+    "message": "Hemen yapıştırmaya hazır. İstediğiniz an düzenleyin."
+  },
+  "afterDownload": {
+    "message": "İndir"
+  },
+  "afterDownloadDescription": {
+    "message": "Doğrudan İndirilenler klasörüne kaydedilir."
+  },
+  "downloadPermissionDenied": {
+    "message": "İndirme izni olmadan SnapFrame dosyaları doğrudan kaydedemez."
+  },
+  "downloadPermissionMissing": {
+    "message": "Doğrudan indirme için indirme izni gerekiyor. İzin verilene kadar çekimler editörde açılır."
+  },
+  "downloadPermissionGrant": {
+    "message": "İzin ver"
+  },
+  "fileNameTitle": {
+    "message": "Dosya adları"
+  },
+  "fileNameHint": {
+    "message": "Tüm indirmelerde kullanılır: görseller, animasyonlar ve hızlı indirmeler."
+  },
+  "fileNameTokens": {
+    "message": "Yer tutucular"
+  },
+  "fileNameReset": {
+    "message": "Varsayılana dön"
+  },
+  "fileNamePreview": {
+    "message": "Örnek:"
+  },
+  "tokenSite": {
+    "message": "site"
+  },
+  "tokenTitle": {
+    "message": "sayfa başlığı"
+  },
+  "tokenDate": {
+    "message": "tarih"
+  },
+  "tokenTime": {
+    "message": "saat"
+  },
+  "historyTitle": {
+    "message": "Kütüphane"
+  },
+  "historyHint": {
+    "message": "Daha eski çekimler (ve düzenlemeleri) otomatik silinir. Her şey bu tarayıcıda kalır."
+  },
+  "historyKeep": {
+    "message": "Saklanacak son çekim sayısı"
+  },
+  "pageAwareTitle": {
+    "message": "Sayfa farkındalığı"
+  },
+  "pageAwareHint": {
+    "message": "Çekim anında sayfa öğelerinin ve kişisel verilerin (e-posta, kart numarası…) nerede olduğunu not eder; mıknatıslı çizim ve tek tıkla gizleme bununla çalışır. Yalnızca konumlar saklanır, metin asla."
+  },
+  "shortcutsSettingsHint": {
+    "message": "Klavye kısayollarını tarayıcınızın eklenti ayarlarından değiştirin ya da ekleyin."
+  },
+  "quickCopied": {
+    "message": "Panoya kopyalandı"
+  },
+  "quickDownloaded": {
+    "message": "İndirilenler'e kaydedildi"
+  },
+  "quickEdit": {
+    "message": "Düzenle"
+  },
+  "noticeCopyFailed": {
+    "message": "Otomatik kopyalanamadı. Sağ üstteki Kopyala düğmesini kullanın."
+  },
+  "noticeDownloadFailed": {
+    "message": "Otomatik indirilemedi. Sağ üstteki İndir düğmesini kullanın."
+  },
+  "lineStyle": {
+    "message": "Çizgi"
+  },
+  "lineSolid": {
+    "message": "Düz"
+  },
+  "lineDashed": {
+    "message": "Kesikli"
+  },
+  "arrowHeads": {
+    "message": "Uçlar"
+  },
+  "arrowHeadEnd": {
+    "message": "Sonda ok başı"
+  },
+  "arrowHeadBoth": {
+    "message": "İki uçta ok başı"
+  },
+  "arrowHeadNone": {
+    "message": "Ok başı yok (düz çizgi)"
+  },
+  "keySpace": {
+    "message": "Boşluk"
+  },
+  "panShortcut": {
+    "message": "Basılı tutup sürükleyerek gezin"
   }
 }

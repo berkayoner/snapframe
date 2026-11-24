@@ -17,6 +17,7 @@ import {
   zoomToFit,
 } from '@/src/editor/zoomActions';
 import { t } from '@/src/shared/i18n';
+import { usePanning } from '@/src/editor/usePanning';
 
 interface CanvasViewportProps {
   image: HTMLImageElement;
@@ -160,6 +161,7 @@ export function CanvasViewport({ image, stageRef }: CanvasViewportProps) {
   const fitLocked = useEditorStore((state) => state.fitLocked);
   const setZoom = useEditorStore((state) => state.setZoom);
   const mockup = getMockupById(mockupId);
+  const pan = usePanning(containerRef);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -252,7 +254,7 @@ export function CanvasViewport({ image, stageRef }: CanvasViewportProps) {
     <div className="viewport">
       <div
         ref={containerRef}
-        className={`viewport__scroller${shouldFit ? ' viewport__scroller--fit' : ''}`}
+        className={`viewport__scroller${shouldFit ? ' viewport__scroller--fit' : ''}${pan === 'idle' ? '' : ` viewport__scroller--${pan}`}`}
         onScroll={rememberCenter}
       >
         <div ref={shellRef} className="viewport__content">

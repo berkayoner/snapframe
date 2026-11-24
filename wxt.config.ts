@@ -16,12 +16,23 @@ export default defineConfig({
     // Least privilege: `activeTab` grants access to the current tab only when
     // the user invokes the extension (toolbar, shortcut or context menu);
     // `scripting` injects the area overlay / full-page driver into that tab;
-    // `contextMenus` backs the right-click entries. No host permissions, no
-    // network access - captures never leave the device.
-    permissions: ['activeTab', 'scripting', 'contextMenus'],
+    // `contextMenus` backs the right-click entries; `offscreen` lets the
+    // worker turn a saved capture into a download link (a service worker
+    // can't create blob URLs). No host permissions, no network access -
+    // captures never leave the device.
+    permissions: ['activeTab', 'scripting', 'contextMenus', 'offscreen'],
+    // Requested from the options page only if the user picks "Download"
+    // as the after-capture action.
+    optional_permissions: ['downloads'],
     // The e2e build (npm run build:e2e) drives captures without a user
-    // gesture, which needs host access. Production builds never include it.
-    ...(mode === 'e2e' ? { host_permissions: ['<all_urls>'] } : {}),
+    // gesture, which needs host access, and tests quick downloads without
+    // the permission prompt. Production builds never include either.
+    ...(mode === 'e2e'
+      ? {
+          host_permissions: ['<all_urls>'],
+          permissions: ['activeTab', 'scripting', 'contextMenus', 'offscreen', 'downloads'],
+        }
+      : {}),
     commands: {
       _execute_action: {
         suggested_key: { default: 'Alt+Shift+X' },

@@ -1,5 +1,5 @@
 import { Ellipse } from 'react-konva';
-import { readShapeStyle, resolveShapeFill } from '@/src/annotations/shapes/shapeStyle';
+import { dashPattern, readShapeStyle, resolveShapeFill } from '@/src/annotations/shapes/shapeStyle';
 import type { CommonShapeProps } from '@/src/editor/shapes/types';
 import type { EditorObject } from '@/src/shared/types';
 
@@ -29,6 +29,8 @@ export function EllipseShape({ object, ...common }: EllipseShapeProps) {
       fill={resolveShapeFill(object.style)}
       stroke={style.stroke}
       strokeWidth={style.strokeWidth}
+      dash={dashPattern(style.strokeWidth)}
+      dashEnabled={style.dashed}
       hitStrokeWidth={Math.max(style.strokeWidth, 12)}
     />
   );

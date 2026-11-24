@@ -7,6 +7,7 @@ import {
   LoaderCircle,
   Monitor,
   PanelTop,
+  Settings,
   SquareDashedMousePointer,
   SquareMousePointer,
 } from 'lucide-react';
@@ -139,6 +140,18 @@ function App() {
             onClick={() => openPage(browser.runtime.getURL('/library.html'))}
           >
             <Library size={17} />
+          </button>
+          <button
+            type="button"
+            className="icon-btn"
+            aria-label={t('openSettings')}
+            data-tooltip={t('openSettings')}
+            onClick={() => {
+              void browser.runtime.openOptionsPage();
+              window.close();
+            }}
+          >
+            <Settings size={17} />
           </button>
           <ThemeToggle tooltipSide="left" />
         </div>

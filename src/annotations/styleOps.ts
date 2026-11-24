@@ -4,7 +4,7 @@ import type { EditorObject } from '@/src/shared/types';
 
 /** Object types whose main color can be changed from the palette. */
 export function supportsColor(object: EditorObject): boolean {
-  return ['shape', 'ellipse', 'arrow', 'text', 'step', 'highlight'].includes(object.type);
+  return ['shape', 'ellipse', 'arrow', 'text', 'step', 'highlight', 'magnify'].includes(object.type);
 }
 
 export function supportsStrokeWidth(object: EditorObject): boolean {
@@ -21,6 +21,7 @@ export function colorPatch(object: EditorObject, color: string): Record<string, 
       return { ...style, stroke: color };
     case 'step':
     case 'highlight':
+    case 'magnify':
       return { ...style, color };
     case 'text': {
       const data = readTextData(style);
@@ -44,6 +45,7 @@ export function readObjectColor(object: EditorObject): string | undefined {
       return typeof style.stroke === 'string' ? style.stroke : undefined;
     case 'step':
     case 'highlight':
+    case 'magnify':
       return typeof style.color === 'string' ? style.color : undefined;
     case 'text': {
       const data = readTextData(style);

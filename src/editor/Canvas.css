@@ -26,6 +26,18 @@
   overflow-x: hidden;
 }
 
+/* Hand tool (Space + drag, or the middle button) */
+.viewport__scroller--ready,
+.viewport__scroller--ready * {
+  cursor: grab !important;
+}
+
+.viewport__scroller--panning,
+.viewport__scroller--panning * {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
 .viewport__content {
   display: flex;
   align-items: center;

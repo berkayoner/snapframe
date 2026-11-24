@@ -25,6 +25,7 @@ web-ext.config.ts
 *.sln
 *.sw?
 
-# Test output
+# Test output (and throwaway debug scripts)
 tests/e2e/.artifacts
+tests/e2e/*.tmp.mjs
 coverage
