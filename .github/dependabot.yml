@@ -11,6 +11,10 @@ updates:
       runtime:
         dependency-type: production
         update-types: [minor, patch]
+    ignore:
+      # typescript-eslint supports TypeScript < 6.1 only; lift this once it supports newer versions.
+      - dependency-name: typescript
+        versions: ['>=6.1.0']
     open-pull-requests-limit: 5
 
   - package-ecosystem: github-actions
